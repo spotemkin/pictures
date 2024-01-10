@@ -9,9 +9,9 @@ const checkJPGIntegrity = (filePath) => {
 const processFile = (filePath) => {
     const isIntact = checkJPGIntegrity(filePath);
     if (isIntact) {
-        fs.appendFileSync('jpg-correct.txt', `${filePath}\n`);
+        fs.appendFileSync('d:\\autopics\\jpg-correct.txt', `${filePath}\n`);
     } else {
-        fs.appendFileSync('jpg-wrong.txt', `${filePath}\n`);
+        fs.appendFileSync('d:\\autopics\\jpg-wrong.txt', `${filePath}\n`);
     }
     return `Processed: ${filePath}`;
 };
