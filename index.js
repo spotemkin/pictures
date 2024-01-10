@@ -1,24 +1,38 @@
+const workerpool = require('workerpool');
 const fs = require('fs');
 const path = require('path');
 
-const checkJPGIntegrity = (filePath) => {
-  const data = fs.readFileSync(filePath);
-  return data[0] === 0xFF && data[1] === 0xD8 && data[data.length - 2] === 0xFF && data[data.length - 1] === 0xD9;
+// Function to recursively list all files in a directory
+const getAllFiles = (dir, fileList = []) => {
+    fs.readdirSync(dir).forEach(file => {
+        const filePath = path.join(dir, file);
+        if (fs.statSync(filePath).isDirectory()) {
+            getAllFiles(filePath, fileList);
+        } else if (path.extname(file).toLowerCase() === '.jpg') {
+            fileList.push(filePath);
+        }
+    });
+    return fileList;
 };
 
-const directoryPath = 'd:/autopics/'; // Dir path
+// Get list of all JPG files
+const files = getAllFiles('D:\\autopics\\');
 
-fs.readdir(directoryPath, (err, files) => {
-  if (err) {
-    console.error('Error reading directory:', err);
-    return;
-  }
+// Create a worker pool
+const pool = workerpool.pool('./worker.js', { maxWorkers: 24 });
 
-  files.forEach(file => {
-    const filePath = path.join(directoryPath, file);
-    if (path.extname(file).toLowerCase() === '.jpg') {
-      const isIntact = checkJPGIntegrity(filePath);
-      console.log(`File ${file} is ${isIntact ? 'intact' : 'corrupted'}`);
-    }
-  });
+// Process each file using the pool
+const promises = files.map(file => {
+    return pool.exec('processFile', [file])
+        .then(result => console.log(result))
+        .catch(err => console.error(err));
+});
+
+// Wait for all promises to resolve
+Promise.all(promises).then(() => {
+    console.log('All files processed');
+    pool.terminate(); // Terminate the pool when done
+}).catch(err => {
+    console.error('Error processing files:', err);
+    pool.terminate();
 });

@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "workerpool": "^9.0.4"
+  }
+}
