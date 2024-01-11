@@ -56,8 +56,13 @@ app.get('/image', (req, res) => {
     res.sendFile(imagePath);
 });
 
-// Serve static files (HTML, CSS, JS)
-app.use(express.static('public'));
+// Serve static files from the React app build directory
+app.use(express.static(path.join(__dirname, 'my-react-app/build')));
+
+// Handles any requests that don't match the ones above
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname + '/my-react-app/build/index.html'));
+});
 
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);

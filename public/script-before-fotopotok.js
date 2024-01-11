@@ -31,29 +31,14 @@ const fetchRandomImages = async (filter = '') => {
     }
 };
 
-const populateFilmstrip = () => {
-    filmstripContainer.innerHTML = ''; // Clear the filmstrip
-    currentImages.slice(currentIndex, currentIndex + 11).forEach((image, index) => {
-      const imgElement = document.createElement('img');
-      imgElement.src = `/image?path=${encodeURIComponent(image)}`;
-      imgElement.className = 'filmstrip-img' + (index === 0 ? ' selected' : ''); // Highlight the first image
-      imgElement.onclick = () => {
-        setCurrentIndex(currentIndex + index); // Set as the current image
-        updateImageDisplay(); // Update the main image
-      };
-      filmstripContainer.appendChild(imgElement);
-    });
-  };
-
-  const updateImageDisplay = () => {
+const updateImageDisplay = () => {
     if (currentIndex >= currentImages.length) {
-      fetchRandomImages(filterInput.value.trim());
+        fetchRandomImages(filterInput.value.trim());
     } else {
-      imageView.src = `/image?path=${encodeURIComponent(currentImages[currentIndex])}`;
-      populateFilmstrip(); // Update filmstrip
-      setCurrentIndex(currentIndex + 1);
+        imageView.src = `/image?path=${encodeURIComponent(currentImages[currentIndex])}`;
+        currentIndex++;
     }
-  };
+};
 
 const startSlideshow = () => {
     if (intervalId) clearInterval(intervalId);

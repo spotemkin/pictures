@@ -72,24 +72,3 @@ body {
     margin-top: 10px;
     font-size: 0.9em; /* Меньший размер шрифта для описания */
   }
-
-  #filmstrip {
-    display: flex;
-    overflow-x: auto;
-    gap: 5px;
-    padding: 10px 0;
-    margin-top: 10px;
-  }
-
-  .filmstrip-img {
-    width: 100px; /* Adjust the width as needed */
-    height: auto;
-    cursor: pointer;
-    opacity: 0.6;
-    transition: opacity 0.3s;
-  }
-
-  .filmstrip-img.selected {
-    border: 2px solid #f50057; /* Highlight color */
-    opacity: 1;
-  }

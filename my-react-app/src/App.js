@@ -13,49 +13,68 @@ function App() {
     fetch(`/api/random-images?filter=${encodeURIComponent(filter)}`)
       .then((res) => res.json())
       .then((data) => {
-        setImages(data.images);
-        setCurrentIndex(0);
-        document.getElementById('album-description').textContent = data.description;
+        if (data.images.length === 0) {
+          console.error('No images found for the filter:', filter);
+          setIsPlaying(false); // Остановим слайдшоу, если изображений нет
+          document.getElementById('album-description').textContent = 'No images found';
+        } else {
+          setImages(data.images);
+          setCurrentIndex(0);
+          document.getElementById('album-description').textContent = data.description;
+        }
       })
       .catch((error) => {
         console.error('Error fetching images:', error);
         document.getElementById('album-description').textContent = error.message;
         setImages([]);
+        setIsPlaying(false); // Остановим слайдшоу в случае ошибки
       });
   };
 
   const updateImageDisplay = () => {
     if (currentIndex >= images.length) {
+      console.log('End of album reached, fetching new album.');
       fetchAlbum(filterTerm);
-    } else if (images.length) {
+    } else {
       document.getElementById('image-viewer').src = `/image?path=${encodeURIComponent(images[currentIndex])}`;
-      setCurrentIndex(currentIndex + 1);
+      setCurrentIndex(prevIndex => prevIndex + 1);
     }
   };
 
   const togglePlay = () => {
-    if (isPlaying) {
+    setIsPlaying(!isPlaying);
+    if (!isPlaying) {
+      const id = setInterval(updateImageDisplay, sliderValue);
+      setIntervalId(id);
+    } else {
       clearInterval(intervalId);
       setIntervalId(null);
-    } else {
-      setIntervalId(setInterval(updateImageDisplay, sliderValue));
     }
-    setIsPlaying(!isPlaying);
   };
 
   useEffect(() => {
     if (isPlaying && images.length > 0) {
-      clearInterval(intervalId);
-      setIntervalId(setInterval(updateImageDisplay, sliderValue));
+      const id = setInterval(updateImageDisplay, sliderValue);
+      setIntervalId(id);
     } else {
       clearInterval(intervalId);
     }
 
+    // Очистка интервала при размонтировании компонента
     return () => clearInterval(intervalId);
   }, [images, currentIndex, sliderValue, isPlaying]);
 
   useEffect(() => {
-    fetchAlbum();
+    fetchAlbum(filterTerm);
+  }, [filterTerm]);
+
+  useEffect(() => {
+    // Стартуем слайдшоу при монтировании компонента
+    if (images.length > 0 && isPlaying) {
+      const id = setInterval(updateImageDisplay, sliderValue);
+      setIntervalId(id);
+    }
+    return () => clearInterval(intervalId);
   }, []);
 
   return (
@@ -74,7 +93,7 @@ function App() {
           max="10000"
           value={sliderValue}
           step="any"
-          onChange={(e) => setSliderValue(e.target.value)}
+          onChange={(e) => setSliderValue(Number(e.target.value))}
         />
         <button onClick={togglePlay}>{isPlaying ? 'Pause' : 'Play'}</button>
         <button onClick={() => fetchAlbum(filterTerm)}>Next Album</button>
