@@ -1,0 +1,74 @@
+/* App.css */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #121212; /* Темный фон */
+    color: rgb(190, 190, 190); /* Белый текст */
+    margin: 0;
+    padding: 10px;
+  }
+
+  .controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px; /* Расстояние между элементами управления */
+    margin-bottom: 10px;
+  }
+
+  input[type='text'], input[type='range'] {
+    background-color: #202020; /* Темный фон для ввода */
+    border: 1px solid #333333; /* Граница элементов */
+    color: white; /* Цвет текста */
+    padding: 5px;
+    border-radius: 4px; /* Скругленные углы */
+  }
+
+  button {
+    background-color: #333333; /* Темный фон кнопок */
+    color: rgb(190, 190, 190);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px; /* Скругленные углы */
+    cursor: pointer; /* Курсор в виде руки при наведении */
+    transition: background-color 0.3s; /* Анимация для фона кнопки */
+  }
+
+  button:hover {
+    background-color: #555555; /* Светлее при наведении */
+  }
+
+  input[type='range'] {
+    -webkit-appearance: none; /* Убираем стандартный стиль в Chrome */
+    width: 100%; /* Полная ширина */
+    height: 8px; /* Высота ползунка */
+    border-radius: 4px; /* Скругленные углы для ползунка */
+  }
+
+  input[type='range']::-webkit-slider-thumb {
+    -webkit-appearance: none; /* Убираем стандартный стиль в Chrome для ползунка */
+    appearance: none;
+    width: 20px; /* Ширина ползунка */
+    height: 20px; /* Высота ползунка */
+    border-radius: 50%; /* Круглый ползунок */
+    background: #f50057; /* Цвет ползунка */
+    cursor: pointer; /* Курсор в виде руки при наведении */
+  }
+
+  input[type='range']::-moz-range-thumb {
+    width: 20px; /* Ширина ползунка */
+    height: 20px; /* Высота ползунка */
+    border-radius: 50%; /* Круглый ползунок */
+    background: #f50057; /* Цвет ползунка */
+    cursor: pointer; /* Курсор в виде руки при наведении */
+  }
+
+  #image-viewer {
+    max-width: 95%; /* Максимальная ширина изображения */
+    margin: 10px auto; /* Отцентровка изображения */
+    display: block; /* Блочное отображение */
+    border-radius: 10px; /* Скругленные углы для изображения */
+  }
+
+  #album-description {
+    margin-top: 10px;
+    font-size: 0.9em; /* Меньший размер шрифта для описания */
+  }
