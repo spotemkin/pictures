@@ -5,8 +5,7 @@ const togglePlayButton = document.getElementById('toggle-play');
 const nextAlbumButton = document.getElementById('next-album');
 const filterInput = document.getElementById('filter-input');
 const filterButton = document.getElementById('filter-button');
-const filmstripContainer = document.getElementById('filmstrip'); // New filmstrip container
-
+const filmstrip = document.getElementById('filmstrip');
 
 let currentImages = [];
 let currentIndex = 0;
@@ -24,6 +23,8 @@ const fetchRandomImages = async (filter = '') => {
         currentImages = data.images;
         currentIndex = 0;
         albumDescription.textContent = data.description;
+        populateFilmstrip();
+        updateImageDisplay();
     } catch (error) {
         console.error('Error fetching images:', error);
         albumDescription.textContent = error.message;
@@ -31,48 +32,64 @@ const fetchRandomImages = async (filter = '') => {
     }
 };
 
+const populateFilmstrip = () => {
+    filmstrip.innerHTML = '';
+    const startIndex = Math.max(currentIndex - 5, 0);
+    const endIndex = Math.min(startIndex + 11, currentImages.length);
+    for (let i = startIndex; i < endIndex; i++) {
+        const img = document.createElement('img');
+        img.className = 'filmstrip-img' + (i === currentIndex ? ' selected' : '');
+        img.src = `/image?path=${encodeURIComponent(currentImages[i])}`;
+        img.onclick = () => {
+            currentIndex = i;
+            updateImageDisplay();
+        };
+        filmstrip.appendChild(img);
+    }
+};
+
 const updateImageDisplay = () => {
     if (currentIndex >= currentImages.length) {
         fetchRandomImages(filterInput.value.trim());
     } else {
-        imageView.src = `/image?path=${encodeURIComponent(currentImages[currentIndex])}`;
+        const selectedImage = currentImages[currentIndex];
+        imageView.src = `/image?path=${encodeURIComponent(selectedImage)}`;
         currentIndex++;
+        populateFilmstrip(); // Update the filmstrip
+        // Highlight the new main image in the filmstrip
+        document.querySelectorAll('.filmstrip-img').forEach((img, index) => {
+            img.classList.toggle('selected', selectedImage === img.src);
+        });
     }
 };
 
 const startSlideshow = () => {
-    if (intervalId) clearInterval(intervalId);
+    clearInterval(intervalId);
     intervalId = setInterval(updateImageDisplay, speedSlider.value);
 };
 
 const togglePlay = () => {
-    if (isPlaying) {
-        clearInterval(intervalId);
-        togglePlayButton.textContent = 'Play';
-    } else {
-        startSlideshow();
-        togglePlayButton.textContent = 'Stop';
-    }
     isPlaying = !isPlaying;
+    togglePlayButton.textContent = isPlaying ? 'Pause' : 'Play';
+    if (isPlaying) {
+        startSlideshow();
+    } else {
+        clearInterval(intervalId);
+    }
 };
 
 const goToNextAlbum = () => {
-    fetchRandomImages(filterInput.value.trim()).then(() => {
-        if (isPlaying) startSlideshow();
-    });
+    clearInterval(intervalId);
+    fetchRandomImages(filterInput.value.trim());
+    if (isPlaying) {
+        startSlideshow();
+    }
 };
 
-speedSlider.addEventListener('change', () => {
-    if (isPlaying) startSlideshow();
-});
-
+speedSlider.addEventListener('change', startSlideshow);
 togglePlayButton.addEventListener('click', togglePlay);
 nextAlbumButton.addEventListener('click', goToNextAlbum);
+filterButton.addEventListener('click', () => fetchRandomImages(filterInput.value.trim()));
 
-filterButton.addEventListener('click', () => {
-    fetchRandomImages(filterInput.value.trim()).then(() => {
-        if (isPlaying) startSlideshow();
-    });
-});
-
-fetchRandomImages().then(startSlideshow);
+// Initialize the slideshow
+fetchRandomImages();

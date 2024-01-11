@@ -1,95 +1,95 @@
 /* App.css */
 body {
     font-family: 'Arial', sans-serif;
-    background-color: #121212; /* Темный фон */
-    color: rgb(190, 190, 190); /* Белый текст */
+    background-color: #121212; /* Dark background */
+    color: rgb(190, 190, 190); /* White text */
     margin: 0;
     padding: 10px;
-  }
+}
 
-  .controls {
+.controls {
     display: flex;
     justify-content: center;
-    gap: 10px; /* Расстояние между элементами управления */
+    gap: 10px; /* Space between control elements */
     margin-bottom: 10px;
-  }
+}
 
-  input[type='text'], input[type='range'] {
-    background-color: #202020; /* Темный фон для ввода */
-    border: 1px solid #333333; /* Граница элементов */
-    color: white; /* Цвет текста */
+input[type='text'], input[type='range'] {
+    background-color: #202020; /* Dark background for input */
+    border: 1px solid #333333; /* Border for elements */
+    color: white; /* Text color */
     padding: 5px;
-    border-radius: 4px; /* Скругленные углы */
-  }
+    border-radius: 4px; /* Rounded corners */
+}
 
-  button {
-    background-color: #333333; /* Темный фон кнопок */
+button {
+    background-color: #333333; /* Dark background for buttons */
     color: rgb(190, 190, 190);
     border: none;
     padding: 10px 20px;
-    border-radius: 4px; /* Скругленные углы */
-    cursor: pointer; /* Курсор в виде руки при наведении */
-    transition: background-color 0.3s; /* Анимация для фона кнопки */
-  }
+    border-radius: 4px; /* Rounded corners */
+    cursor: pointer; /* Hand cursor on hover */
+    transition: background-color 0.3s; /* Background color transition for button */
+}
 
-  button:hover {
-    background-color: #555555; /* Светлее при наведении */
-  }
+button:hover {
+    background-color: #555555; /* Lighter on hover */
+}
 
-  input[type='range'] {
-    -webkit-appearance: none; /* Убираем стандартный стиль в Chrome */
-    width: 100%; /* Полная ширина */
-    height: 8px; /* Высота ползунка */
-    border-radius: 4px; /* Скругленные углы для ползунка */
-  }
+input[type='range'] {
+    -webkit-appearance: none; /* Remove default style in Chrome */
+    width: 100%; /* Full width */
+    height: 8px; /* Slider height */
+    border-radius: 4px; /* Rounded corners for slider */
+}
 
-  input[type='range']::-webkit-slider-thumb {
-    -webkit-appearance: none; /* Убираем стандартный стиль в Chrome для ползунка */
+input[type='range']::-webkit-slider-thumb {
+    -webkit-appearance: none; /* Remove default style in Chrome for thumb */
     appearance: none;
-    width: 20px; /* Ширина ползунка */
-    height: 20px; /* Высота ползунка */
-    border-radius: 50%; /* Круглый ползунок */
-    background: #f50057; /* Цвет ползунка */
-    cursor: pointer; /* Курсор в виде руки при наведении */
-  }
+    width: 20px; /* Thumb width */
+    height: 20px; /* Thumb height */
+    border-radius: 50%; /* Round thumb */
+    background: #f50057; /* Thumb color */
+    cursor: pointer; /* Hand cursor on hover */
+}
 
-  input[type='range']::-moz-range-thumb {
-    width: 20px; /* Ширина ползунка */
-    height: 20px; /* Высота ползунка */
-    border-radius: 50%; /* Круглый ползунок */
-    background: #f50057; /* Цвет ползунка */
-    cursor: pointer; /* Курсор в виде руки при наведении */
-  }
+input[type='range']::-moz-range-thumb {
+    width: 20px; /* Thumb width */
+    height: 20px; /* Thumb height */
+    border-radius: 50%; /* Round thumb */
+    background: #f50057; /* Thumb color */
+    cursor: pointer; /* Hand cursor on hover */
+}
 
-  #image-viewer {
-    max-width: 95%; /* Максимальная ширина изображения */
-    margin: 10px auto; /* Отцентровка изображения */
-    display: block; /* Блочное отображение */
-    border-radius: 10px; /* Скругленные углы для изображения */
-  }
+#image-viewer {
+    max-width: 95%; /* Maximum image width */
+    margin: 10px auto; /* Center image */
+    display: block; /* Block display */
+    border-radius: 10px; /* Rounded corners for image */
+}
 
-  #album-description {
+#album-description {
     margin-top: 10px;
-    font-size: 0.9em; /* Меньший размер шрифта для описания */
-  }
+    font-size: 0.9em; /* Smaller font size for description */
+}
 
-  #filmstrip {
+#filmstrip {
     display: flex;
     overflow-x: auto;
     gap: 5px;
     padding: 10px 0;
     margin-top: 10px;
-  }
+}
 
-  .filmstrip-img {
+.filmstrip-img {
     width: 100px; /* Adjust the width as needed */
     height: auto;
     cursor: pointer;
     opacity: 0.6;
     transition: opacity 0.3s;
-  }
+}
 
-  .filmstrip-img.selected {
+.filmstrip-img.selected {
     border: 2px solid #f50057; /* Highlight color */
     opacity: 1;
-  }
+}
