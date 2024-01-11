@@ -8,11 +8,15 @@ const directoryPath = 'd:\\autopics';
 const listDirectories = async () => {
     try {
         const items = await fs.readdir(directoryPath, { withFileTypes: true });
-        const directories = items
+        const directoryList = items
             .filter(item => item.isDirectory())
-            .map(dir => dir.name.replace(/-/g, ' ')); // Replace dashes with spaces
+            .map(dir => {
+                const fullPath = path.join(directoryPath, dir.name);
+                const formattedName = dir.name.replace(/-/g, ' ');
+                return `${fullPath}\t${formattedName}`;
+            });
 
-        await fs.writeFile('album-list.txt', directories.join('\n'));
+        await fs.writeFile('album-list.txt', directoryList.join('\n'));
         console.log('Album list has been created.');
     } catch (err) {
         console.error('Error:', err.message);

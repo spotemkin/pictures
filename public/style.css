@@ -1,0 +1,19 @@
+body {
+    text-align: center;
+    background-color: black;
+}
+
+.controls {
+    margin-bottom: 20px;
+}
+
+#image-viewer {
+    max-width: 100%;
+    max-height: 80vh;
+    object-fit: contain;
+}
+
+#album-description {
+    color: white;
+    margin-top: 10px;
+}
