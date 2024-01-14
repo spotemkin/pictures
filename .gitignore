@@ -131,8 +131,7 @@ dist
 
 
 # users
-album-size.txt
-album-list.txt
+*.txt
 
 
 # Stores VSCode versions used for testing VSCode extensions
