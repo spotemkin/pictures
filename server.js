@@ -4,110 +4,98 @@ const path = require('path');
 
 const app = express();
 const port = 3000;
-const albumListPath = 'album-list.txt';
-const albumSizePath = 'album-size.txt';
+const albumDataPath = 'album-list.txt';
 
-let albumList = [];
-let albumDescriptions = {};
-let imageMap = new Map();
-let imageSizeMap = new Map();
+let imageDetails = new Map();
 
 function generateRandomId() {
     let id;
     do {
         id = `pic-${Math.floor(Math.random() * 1e10)}`;
-    } while (imageMap.has(id));
+    } while (imageDetails.has(id));
     return id;
 }
 
 async function initializeAlbumData() {
     try {
-        const albumData = await fs.readFile(albumListPath, 'utf8');
-        albumData.split('\n').forEach(line => {
-            const [fullPath, description] = line.split('\t');
-            albumDescriptions[fullPath] = description;
-            albumList.push(fullPath);
-        });
-
-        const sizeData = await fs.readFile(albumSizePath, 'utf8');
-        sizeData.split('\n').forEach(line => {
-            const [imagePath, width] = line.split('\t');
-            imageSizeMap.set(imagePath, parseInt(width, 10));
-        });
-
-        for (let albumPath of albumList) {
-            const files = await fs.readdir(albumPath);
-            files.forEach(file => {
-                if (file.endsWith('.jpg')) {
-                    const imagePath = path.join(albumPath, file);
-                    const imageId = generateRandomId();
-                    imageMap.set(imageId, imagePath);
-                }
+        const data = await fs.readFile(albumDataPath, 'utf8');
+        data.split('\n').forEach(line => {
+            const parts = line.split(';');
+            if (parts.length < 5) {
+                console.warn(`pass wrong type string: ${line}`);
+                return;
+            }
+            const [imagePath, width, height, , description] = parts;
+            const imageId = generateRandomId();
+            imageDetails.set(imageId, {
+                path: imagePath,
+                width: parseInt(width, 10),
+                height: parseInt(height, 10),
+                description: description ? description.trim() : parts.slice(4).join(' ').trim()
             });
-        }
+        });
     } catch (err) {
-        console.error('Error initializing album data:', err);
+        console.error('Err with init album data:', err);
     }
 }
 
-function filterByWidth(imageFiles, widthFilter) {
-    return imageFiles.filter(file => {
-        const width = imageSizeMap.get(file);
-        switch (widthFilter) {
-            case '500':
-                return width <= 500;
-            case '900':
-                return width > 500 && width <= 900;
-            case '1300':
-                return width > 900 && width <= 1300;
-            case '2600':
-                return width > 1300 && width <= 2600;
-            case 'MORE!':
-                return width > 2600;
-            default:
-                return true;
+function filterImages(images, filterKeywords, sizeFilter) {
+    const sizeRanges = {
+        "500": { min: 0, max: 500 },
+        "900": { min: 501, max: 900 },
+        "1300": { min: 901, max: 1300 },
+        "2600": { min: 1301, max: 2600 },
+        "MORE!": { min: 2601, max: Infinity }
+    };
+
+    return images.filter(({ width, height, description }) => {
+        const descriptionMatch = !filterKeywords.length || filterKeywords.every(keyword => description.toLowerCase().includes(keyword));
+        let sizeMatch = true; // Default to true if no size filter is applied
+
+        if (sizeFilter && sizeRanges[sizeFilter]) {
+            const { min, max } = sizeRanges[sizeFilter];
+            const largestDimension = Math.max(width, height);
+            sizeMatch = largestDimension >= min && largestDimension <= max;
         }
+
+        return descriptionMatch && sizeMatch;
     });
 }
 
 app.get('/api/random-images', async (req, res) => {
     const filterKeywords = req.query.filter ? req.query.filter.toLowerCase().split(' ') : [];
-    const widthFilter = req.query.width || '';
-    let filteredAlbumList = albumList;
+    const widthFilter = req.query.width;
+    const albums = new Map();
 
-    if (filterKeywords.length > 0) {
-        filteredAlbumList = albumList.filter(albumPath => {
-            const description = albumDescriptions[albumPath].toLowerCase();
-            return filterKeywords.every(keyword => description.includes(keyword));
-        });
-    }
+    imageDetails.forEach((details, id) => {
+        const albumPath = path.dirname(details.path);
+        if (!albums.has(albumPath)) {
+            albums.set(albumPath, []);
+        }
+        albums.get(albumPath).push({ id, ...details });
+    });
 
-    if (filteredAlbumList.length === 0) {
+    let filteredAlbums = Array.from(albums.entries()).filter(([albumPath, images]) => {
+        return filterImages(images, filterKeywords, widthFilter).length > 0;
+    });
+
+    if (filteredAlbums.length === 0) {
         return res.status(404).json({ error: 'No album found' });
     }
 
-    const randomAlbumIndex = Math.floor(Math.random() * filteredAlbumList.length);
-    const albumPath = filteredAlbumList[randomAlbumIndex];
+    const [randomAlbumPath, randomAlbumImages] = filteredAlbums[Math.floor(Math.random() * filteredAlbums.length)];
+    const filteredImages = filterImages(randomAlbumImages, filterKeywords, widthFilter);
 
-    try {
-        const files = await fs.readdir(albumPath);
-        let imageFiles = files.filter(file => file.endsWith('.jpg'));
-        imageFiles = filterByWidth(imageFiles.map(file => path.join(albumPath, file)), widthFilter);
-        const imageIds = imageFiles.map(file => {
-            for (let [id, path] of imageMap) {
-                if (path === file) return id;
-            }
-        });
-        res.json({ images: imageIds, description: albumDescriptions[albumPath] });
-    } catch (err) {
-        res.status(500).send('Error reading album');
-    }
+    res.json({
+        images: filteredImages.map(image => image.id),
+        description: randomAlbumImages[0].description
+    });
 });
 
 app.get('/image', (req, res) => {
     const imageId = req.query.id;
-    if (imageMap.has(imageId)) {
-        res.sendFile(imageMap.get(imageId));
+    if (imageDetails.has(imageId)) {
+        res.sendFile(imageDetails.get(imageId).path);
     } else {
         res.status(404).send('Image not found');
     }

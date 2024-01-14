@@ -27,6 +27,10 @@ document.addEventListener('DOMContentLoaded', function () {
             albumDescription.textContent = data.description;
             populateFilmstrip();
             updateImageDisplay();
+            // Если слайд-шоу включено, запускаем его
+            if (isPlaying) {
+                startSlideshow();
+            }
         } catch (error) {
             console.error('Error fetching images:', error);
             albumDescription.textContent = error.message;
