@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const nextAlbumButton = document.getElementById('next-album');
     const filterInput = document.getElementById('filter-input');
     const filterButton = document.getElementById('filter-button');
+    const widthFilterSelect = document.getElementById('width-filter');
     const filmstrip = document.getElementById('filmstrip');
 
     let currentImages = [];
@@ -13,9 +14,9 @@ document.addEventListener('DOMContentLoaded', function () {
     let intervalId;
     let isPlaying = true;
 
-    const fetchRandomImages = async (filter = '') => {
+    const fetchRandomImages = async (filter = '', widthFilter = '') => {
         try {
-            const response = await fetch(`/api/random-images?filter=${encodeURIComponent(filter)}`);
+            const response = await fetch(`/api/random-images?filter=${encodeURIComponent(filter)}&width=${encodeURIComponent(widthFilter)}`);
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.error || 'Error fetching images');
@@ -52,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const updateImageDisplay = () => {
         if (currentIndex >= currentImages.length) {
-            fetchRandomImages(filterInput.value.trim());
+            fetchRandomImages(filterInput.value.trim(), widthFilterSelect.value);
         } else {
             const selectedImageId = currentImages[currentIndex];
             imageView.src = `/image?id=${encodeURIComponent(selectedImageId)}`;
@@ -81,7 +82,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const goToNextAlbum = () => {
         clearInterval(intervalId);
-        fetchRandomImages(filterInput.value.trim());
+        fetchRandomImages(filterInput.value.trim(), widthFilterSelect.value);
         if (isPlaying) {
             startSlideshow();
         }
@@ -90,7 +91,8 @@ document.addEventListener('DOMContentLoaded', function () {
     speedSlider.addEventListener('change', startSlideshow);
     togglePlayButton.addEventListener('click', togglePlay);
     nextAlbumButton.addEventListener('click', goToNextAlbum);
-    filterButton.addEventListener('click', () => fetchRandomImages(filterInput.value.trim()));
+    filterButton.addEventListener('click', () => fetchRandomImages(filterInput.value.trim(), widthFilterSelect.value));
+    widthFilterSelect.addEventListener('change', () => fetchRandomImages(filterInput.value.trim(), widthFilterSelect.value));
 
     fetchRandomImages();
 });

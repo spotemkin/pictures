@@ -14,8 +14,8 @@ body {
     margin-bottom: 10px;
 }
 
-input[type='text'], input[type='range'] {
-    background-color: #202020; /* Dark background for input */
+input[type='text'], input[type='range'], select {
+    background-color: #202020; /* Dark background for input and select */
     border: 1px solid #333333; /* Border for elements */
     color: white; /* Text color */
     padding: 5px;
@@ -92,4 +92,8 @@ input[type='range']::-moz-range-thumb {
 .filmstrip-img.selected {
     border: 2px solid #f50057; /* Highlight color */
     opacity: 1;
+}
+
+select {
+    cursor: pointer; /* Hand cursor on hover */
 }

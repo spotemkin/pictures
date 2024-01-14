@@ -5,10 +5,12 @@ const path = require('path');
 const app = express();
 const port = 3000;
 const albumListPath = 'album-list.txt';
+const albumSizePath = 'album-size.txt';
 
 let albumList = [];
 let albumDescriptions = {};
 let imageMap = new Map();
+let imageSizeMap = new Map();
 
 function generateRandomId() {
     let id;
@@ -20,11 +22,17 @@ function generateRandomId() {
 
 async function initializeAlbumData() {
     try {
-        const data = await fs.readFile(albumListPath, 'utf8');
-        data.split('\n').forEach(line => {
+        const albumData = await fs.readFile(albumListPath, 'utf8');
+        albumData.split('\n').forEach(line => {
             const [fullPath, description] = line.split('\t');
             albumDescriptions[fullPath] = description;
             albumList.push(fullPath);
+        });
+
+        const sizeData = await fs.readFile(albumSizePath, 'utf8');
+        sizeData.split('\n').forEach(line => {
+            const [imagePath, width] = line.split('\t');
+            imageSizeMap.set(imagePath, parseInt(width, 10));
         });
 
         for (let albumPath of albumList) {
@@ -42,8 +50,29 @@ async function initializeAlbumData() {
     }
 }
 
+function filterByWidth(imageFiles, widthFilter) {
+    return imageFiles.filter(file => {
+        const width = imageSizeMap.get(file);
+        switch (widthFilter) {
+            case '500':
+                return width <= 500;
+            case '900':
+                return width > 500 && width <= 900;
+            case '1300':
+                return width > 900 && width <= 1300;
+            case '2600':
+                return width > 1300 && width <= 2600;
+            case 'MORE!':
+                return width > 2600;
+            default:
+                return true;
+        }
+    });
+}
+
 app.get('/api/random-images', async (req, res) => {
     const filterKeywords = req.query.filter ? req.query.filter.toLowerCase().split(' ') : [];
+    const widthFilter = req.query.width || '';
     let filteredAlbumList = albumList;
 
     if (filterKeywords.length > 0) {
@@ -62,11 +91,11 @@ app.get('/api/random-images', async (req, res) => {
 
     try {
         const files = await fs.readdir(albumPath);
-        const imageFiles = files.filter(file => file.endsWith('.jpg'));
+        let imageFiles = files.filter(file => file.endsWith('.jpg'));
+        imageFiles = filterByWidth(imageFiles.map(file => path.join(albumPath, file)), widthFilter);
         const imageIds = imageFiles.map(file => {
-            const imagePath = path.join(albumPath, file);
             for (let [id, path] of imageMap) {
-                if (path === imagePath) return id;
+                if (path === file) return id;
             }
         });
         res.json({ images: imageIds, description: albumDescriptions[albumPath] });
@@ -83,7 +112,6 @@ app.get('/image', (req, res) => {
         res.status(404).send('Image not found');
     }
 });
-
 
 app.use(express.static('public'));
 
