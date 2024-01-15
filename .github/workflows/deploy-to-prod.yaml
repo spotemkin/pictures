@@ -57,7 +57,7 @@ jobs:
             ALBUM_LIST_PATH=${{ vars.ALBUM_LIST_PATH }}
             PIC_CLIENT_PORT=${{ vars.PIC_CLIENT_PORT }}
           push: true
-          tags: spotemkin/pic-main:latest
+          tags: spotemkin/pictures:latest
           # labels: ${{ steps.meta.outputs.labels }}
           no-cache: true
 
@@ -67,7 +67,7 @@ jobs:
           context: ./public
           file: ./public/Dockerfile
           push: true
-          tags: spotemkin/pic-client:latest
+          tags: spotemkin/pictures:latest
           # labels: ${{ steps.meta.outputs.labels }}
           no-cache: true
 
