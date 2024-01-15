@@ -78,7 +78,7 @@ jobs:
           port: ${{ vars.SSH_PORT }}
           username: ${{ vars.SSH_USER }}
           key: ${{ secrets.DEV_SERVER_KEY }}
-          source: "Dockerfile, public/Dockerfile, docker-compose-prod.yaml"
+          source: "Dockerfile, public/Dockerfile, docker-compose-prod.yaml, nginx/default.conf"
           target: /srv/pic-project
           overwrite: true
           debug: true
