@@ -26,8 +26,8 @@ jobs:
 
       - name: Copy Docker and docker-compose files to server
         env:
-          ALBUM_LIST_PATH: ${{ github.event.inputs.album_list_path }}
-          PIC_CLIENT_PORT: ${{ github.event.inputs.pic_client_port }}
+          ALBUM_LIST_PATH: ${{ vars.ALBUM_LIST_PATH }}
+          PIC_CLIENT_PORT: ${{ vars.PIC_CLIENT_PORT }}
         uses: appleboy/scp-action@master
         with:
           host: ${{ vars.MAIN_DOMAIN }}
@@ -41,8 +41,8 @@ jobs:
 
       - name: Docker compose up
         env:
-          ALBUM_LIST_PATH: ${{ github.event.inputs.album_list_path }}
-          PIC_CLIENT_PORT: ${{ github.event.inputs.pic_client_port }}
+          ALBUM_LIST_PATH: ${{ vars.ALBUM_LIST_PATH }}
+          PIC_CLIENT_PORT: ${{ vars.PIC_CLIENT_PORT }}
         uses: appleboy/ssh-action@master
         with:
           host: ${{ vars.MAIN_DOMAIN }}
