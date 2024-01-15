@@ -1,0 +1,53 @@
+version: '3.9'
+
+services:
+  pic-main:
+    build: .
+    container_name: pic-main
+    restart: always
+    volumes:
+      - /data/pics/auto:/data/pics/auto
+      - /data/pics/sys:/data/pics/sys
+    networks:
+      - traefik
+
+
+  pic-client:
+    build: ./public
+    container_name: pic-client
+    restart: always
+    # ports: //not needed direct access to PIC_CLIENT_PORT
+      # - ${PIC_CLIENT_PORT}:${PIC_CLIENT_PORT} //not needed direct access to PIC_CLIENT_PORT
+    networks:
+      - traefik
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.pic-client-service.rule=Host(`${PIC_HOST}`)
+      - traefik.http.routers.pic-client-service.service.pic-client-service
+      - traefik.http.routers.pic-client-service.entrypoints=web
+      - traefik.http.routers.pic-client-serviceSecure.rule=Host(`${PIC_HOST}`)
+      - traefik.http.routers.pic-client-serviceSecure.service.pic-client-service
+      - traefik.http.routers.pic-client-serviceSecure.entrypoints=webSecure
+      - traefik.http.routers.pic-client-serviceSecure.tls.certresolver=letsEncrypt
+
+      - traefik.http.middlewares.pic-client-header.headers.FrameDeny=true
+      - traefik.http.middlewares.pic-client-header.headers.browserXssFilter=true
+      - traefik.http.middlewares.pic-client-header.headers.contentTypeNosniff=true
+      - traefik.http.middlewares.pic-client-header.headers.stsSeconds=315360000
+      - traefik.http.middlewares.pic-client-header.headers.stsIncludeSubdomains=true
+      - traefik.http.middlewares.pic-client-header.headers.stsPreload=true
+
+      - traefik.http.middlewares.https-redirect.redirectScheme.scheme=https
+      - traefik.http.middlewares.https-redirect.redirectScheme.permanent=true
+
+      - traefik.http.middlewares.compress.compress=true
+
+      - traefik.http.routers.pic-client-service.middlewares.pic-client-header@docker,https-redirect@docker,compress@docker
+      - traefik.http.routers.pic-client-serviceSecure.middlewares.pic-client-header@docker,https-redirect@docker,compress@docker
+
+      - traefik.http.services.pic-client.loadbalancer.server.port=${PIC_CLIENT_PORT}
+
+networks:
+  traefik:
+    external: true
+    name: traefik

@@ -5,7 +5,7 @@ import PQueue from 'p-queue';
 
 const directoryPath = 'd:\\autopics';
 const queue = new PQueue({ concurrency: 100 });
-const outputStream = fs.createWriteStream('album-list.txt', { flags: 'a' });
+const outputStream = fs.createWriteStream('album-list-wind.txt', { flags: 'a' });
 
 const processFile = async (filePath, directoryName) => {
     try {

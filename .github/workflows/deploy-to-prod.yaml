@@ -1,0 +1,56 @@
+name: Deploy PIC to PROD
+
+on:
+  workflow_dispatch:
+
+
+
+# env:
+  # ALBUM_LIST_PATH: ${{ secrets.ALBUM_LIST_PATH }}
+  # PIC_CLIENT_PORT: ${{ secrets.PIC_CLIENT_PORT }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: prod
+
+    # permissions:
+      # contents: read
+      # packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.1.0
+
+      - name: List files
+        run: ls -l
+
+      - name: Copy Docker and docker-compose files to server
+        env:
+          ALBUM_LIST_PATH: ${{ github.event.inputs.album_list_path }}
+          PIC_CLIENT_PORT: ${{ github.event.inputs.pic_client_port }}
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ vars.MAIN_DOMAIN }}
+          port: ${{ vars.SSH_PORT }}
+          username: ${{ vars.SSH_USER }}
+          key: ${{ secrets.DEV_SERVER_KEY }}
+          source: "Dockerfile, public/Dockerfile, docker-compose-prod.yaml"
+          target: /srv/pic-project
+          debug: true
+
+      - name: Docker compose up
+        env:
+          ALBUM_LIST_PATH: ${{ github.event.inputs.album_list_path }}
+          PIC_CLIENT_PORT: ${{ github.event.inputs.pic_client_port }}
+        uses: appleboy/ssh-action@master
+        with:
+          script: |
+            cd srv/pic-project
+            export EMAIL=${{ vars.EMAIL }}
+            export PIC_HOST=${{ vars.PIC_HOST }}
+            docker-compose -f docker-compose-prod.yaml pull
+            docker-compose -f docker-compose-prod.yaml down
+            docker-compose -f docker-compose-prod.yaml up -d
+

@@ -1,11 +1,10 @@
-require('dotenv').config({ path: '.env.local' });
 const express = require('express');
 const fs = require('fs').promises;
 const path = require('path');
 
 const app = express();
-const port = process.env.PIC_SERVER_PORT;
-const albumDataPath = process.env.ALBUM_LIST_PATH || 'album-list.txt';
+const port = 3000;
+const albumDataPath = 'album-list.txt';
 
 let imageDetails = new Map();
 
