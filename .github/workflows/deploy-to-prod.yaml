@@ -9,7 +9,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     environment:
       name: prod
 
@@ -30,9 +30,9 @@ jobs:
           PIC_CLIENT_PORT: ${{ github.event.inputs.pic_client_port }}
         uses: appleboy/scp-action@master
         with:
-          host: ${{ secrets.MAIN_DOMAIN }}
-          port: ${{ secrets.SSH_PORT }}
-          username: ${{ secrets.SSH_USER }}
+          host: ${{ vars.MAIN_DOMAIN }}
+          port: ${{ vars.SSH_PORT }}
+          username: ${{ vars.SSH_USER }}
           key: ${{ secrets.DEV_SERVER_KEY }}
           source: "Dockerfile, public/Dockerfile, docker-compose-prod.yaml"
           target: /srv/pic-project
@@ -47,9 +47,9 @@ jobs:
         with:
           script: |
             cd srv/pic-project
-            export EMAIL=${{ env.EMAIL }}
-            export PIC_HOST=${{ env.PIC_HOST }}
-            export MAIN_DOMAIN=${{ secrets.MAIN_DOMAIN }}
+            export EMAIL=${{ vars.EMAIL }}
+            export PIC_HOST=${{ vars.PIC_HOST }}
+            export MAIN_DOMAIN=${{ vars.MAIN_DOMAIN }}
             docker-compose -f docker-compose-prod.yaml pull
             docker-compose -f docker-compose-prod.yaml down
             docker-compose -f docker-compose-prod.yaml up -d
