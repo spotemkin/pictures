@@ -57,8 +57,8 @@ jobs:
             ALBUM_LIST_PATH=${{ vars.ALBUM_LIST_PATH }}
             PIC_CLIENT_PORT=${{ vars.PIC_CLIENT_PORT }}
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: spotemkin/pic-main:latest
+          # labels: ${{ steps.meta.outputs.labels }}
           no-cache: true
 
       - name: Build and push pic-client
@@ -67,8 +67,8 @@ jobs:
           context: ./public
           file: ./public/Dockerfile
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: spotemkin/pic-client:latest
+          # labels: ${{ steps.meta.outputs.labels }}
           no-cache: true
 
       - name: Copy Docker and docker-compose files to server
