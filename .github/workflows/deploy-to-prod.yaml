@@ -30,9 +30,9 @@ jobs:
           PIC_CLIENT_PORT: ${{ github.event.inputs.pic_client_port }}
         uses: appleboy/scp-action@master
         with:
-          host: ${{ env.MAIN_DOMAIN }}
-          port: ${{ env.SSH_PORT }}
-          username: ${{ env.SSH_USER }}
+          host: ${{ secrets.MAIN_DOMAIN }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.DEV_SERVER_KEY }}
           source: "Dockerfile, public/Dockerfile, docker-compose-prod.yaml"
           target: /srv/pic-project
@@ -49,7 +49,7 @@ jobs:
             cd srv/pic-project
             export EMAIL=${{ env.EMAIL }}
             export PIC_HOST=${{ env.PIC_HOST }}
-            export MAIN_DOMAIN=${{ env.MAIN_DOMAIN }}
+            export MAIN_DOMAIN=${{ secrets.MAIN_DOMAIN }}
             docker-compose -f docker-compose-prod.yaml pull
             docker-compose -f docker-compose-prod.yaml down
             docker-compose -f docker-compose-prod.yaml up -d
