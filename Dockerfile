@@ -14,7 +14,7 @@ COPY package*.json ./
 
 RUN npm install
 
-COPY server.js .
+COPY server.js ./
 # COPY album-list.txt .  //from server volume
 
 EXPOSE ${PIC_SERVER_PORT}
