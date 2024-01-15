@@ -69,11 +69,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-            org.opencontainers.image.source=${{ github.repository }}
           no-cache: true
-
-
-
 
       - name: Copy Docker and docker-compose files to server
         env:
