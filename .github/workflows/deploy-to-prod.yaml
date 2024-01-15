@@ -45,15 +45,16 @@ jobs:
           PIC_CLIENT_PORT: ${{ github.event.inputs.pic_client_port }}
         uses: appleboy/ssh-action@master
         with:
+          host: ${{ vars.MAIN_DOMAIN }}
+          port: ${{ vars.SSH_PORT }}
+          username: ${{ vars.SSH_USER }}
+          key: ${{ secrets.DEV_SERVER_KEY }}
           script: |
-            cd srv/pic-project
+            cd /srv/pic-project
             export EMAIL=${{ vars.EMAIL }}
             export PIC_HOST=${{ vars.PIC_HOST }}
             export MAIN_DOMAIN=${{ vars.MAIN_DOMAIN }}
             docker-compose -f docker-compose-prod.yaml pull
             docker-compose -f docker-compose-prod.yaml down
             docker-compose -f docker-compose-prod.yaml up -d
-          host: ${{ vars.MAIN_DOMAIN }}
-          port: ${{ vars.SSH_PORT }}
-          username: ${{ vars.SSH_USER }}
-          key: ${{ secrets.DEV_SERVER_KEY }}
+
