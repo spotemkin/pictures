@@ -66,7 +66,7 @@ jobs:
           port: ${{ vars.SSH_PORT }}
           username: ${{ vars.SSH_USER }}
           key: ${{ secrets.DEV_SERVER_KEY }}
-          source: "Dockerfile, server.js, package.json, package-lock.json, docker-compose-prod.yaml"
+    source: "Dockerfile, server.js, package.json, package-lock.json, docker-compose-prod.yaml, public/"
           target: /srv/pic-project/
           overwrite: true
           debug: true
