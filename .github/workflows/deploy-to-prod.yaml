@@ -83,6 +83,9 @@ jobs:
           key: ${{ secrets.DEV_SERVER_KEY }}
           script: |
             cd /srv/pic-project/
+            # docker stop pic_main
+            # docker rm pic_main
+            # docker system prune -f
             export EMAIL=${{ vars.EMAIL }}
             export PIC_DOMAIN=${{ vars.PIC_DOMAIN }}
             export MAIN_DOMAIN=${{ vars.MAIN_DOMAIN }}

@@ -9,6 +9,7 @@ services:
       - /data/pics/auto:/data/pics/auto
       - /data/pics/sys/album-data:/data/pics/sys/album-data
       - /data/pics/sys/http-data:/data/pics/sys/http-data
+      - /srv/pic-project/public:/app/public
     networks:
       - traefik
     labels:
