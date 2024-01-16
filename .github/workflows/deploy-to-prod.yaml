@@ -99,7 +99,7 @@ jobs:
           script: |
             cd /srv/pic-project/
             export EMAIL=${{ vars.EMAIL }}
-            export PIC_HOST=${{ vars.PIC_HOST }}
+            export PIC_DOMAIN=${{ vars.PIC_DOMAIN }}
             export MAIN_DOMAIN=${{ vars.MAIN_DOMAIN }}
             export ALBUM_LIST_PATH=${{ vars.ALBUM_LIST_PATH }}
             export PIC_CLIENT_PORT=${{ vars.PIC_CLIENT_PORT }}

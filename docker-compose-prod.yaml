@@ -42,10 +42,10 @@ services:
       - traefik
     labels:
       - traefik.enable=true
-      - traefik.http.routers.pic-client-service.rule=Host(`${PIC_HOST}`)
+      - traefik.http.routers.pic-client-service.rule=Host(`${PIC_DOMAIN}`)
       - traefik.http.routers.pic-client-service.service.pic-client-service
       - traefik.http.routers.pic-client-service.entrypoints=web
-      - traefik.http.routers.pic-client-serviceSecure.rule=Host(`${PIC_HOST}`)
+      - traefik.http.routers.pic-client-serviceSecure.rule=Host(`${PIC_DOMAIN}`)
       - traefik.http.routers.pic-client-serviceSecure.service.pic-client-service
       - traefik.http.routers.pic-client-serviceSecure.entrypoints=webSecure
       - traefik.http.routers.pic-client-serviceSecure.tls.certresolver=letsEncrypt
