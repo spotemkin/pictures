@@ -1,15 +1,42 @@
 version: '3.9'
 
 services:
-  picmain:
+  pic_main:
     build: .
     container_name: pic_main
     restart: always
     volumes:
       - /data/pics/auto:/data/pics/auto
       - /data/pics/sys/album-data:/data/pics/sys/album-data
+      - /data/pics/sys/http-data:/data/pics/sys/http-data
     networks:
       - traefik
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.sharp-service.rule=Host(`${PIC_DOMAIN}`)
+      - traefik.http.routers.sharp-service.service=sharp-service
+      - traefik.http.routers.sharp-service.entrypoints=web
+      - traefik.http.routers.sharp-serviceSecure.rule=Host(`${PIC_DOMAIN}`)
+      - traefik.http.routers.sharp-serviceSecure.service=sharp-service
+      - traefik.http.routers.sharp-serviceSecure.entrypoints=webSecure
+      - traefik.http.routers.sharp-serviceSecure.tls.certresolver=letsEncrypt
+
+      - traefik.http.middlewares.sharp-header.headers.FrameDeny=true
+      - traefik.http.middlewares.sharp-header.headers.browserXssFilter=true
+      - traefik.http.middlewares.sharp-header.headers.contentTypeNosniff=true
+      - traefik.http.middlewares.sharp-header.headers.stsSeconds=315360000
+      - traefik.http.middlewares.sharp-header.headers.stsIncludeSubdomains=true
+      - traefik.http.middlewares.sharp-header.headers.stsPreload=true
+
+      - traefik.http.middlewares.https-redirect.redirectScheme.scheme=https
+      - traefik.http.middlewares.https-redirect.redirectScheme.permanent=true
+
+      - traefik.http.middlewares.compress.compress=true
+
+      - traefik.http.routers.sharp-service.middlewares=sharp-header@docker,https-redirect@docker,compress@docker
+      - traefik.http.routers.sharp-serviceSecure.middlewares=sharp-header@docker,https-redirect@docker,compress@docker
+
+      - traefik.http.services.sharp-service.loadbalancer.server.port=${SHARP_PORT}
 
 networks:
   traefik:
