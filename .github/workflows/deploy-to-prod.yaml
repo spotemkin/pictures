@@ -81,7 +81,7 @@ jobs:
           port: ${{ vars.SSH_PORT }}
           username: ${{ vars.SSH_USER }}
           key: ${{ secrets.DEV_SERVER_KEY }}
-          source: "public"
+          source: "public/*"
           target: /data/pics/sys/nginx-data/
           overwrite: true
           debug: true
