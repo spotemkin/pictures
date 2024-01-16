@@ -1,9 +1,9 @@
 version: '3.9'
 
 services:
-  pic-main:
+  picmain:
     build: .
-    container_name: pic-main
+    container_name: picmain
     restart: always
     volumes:
       - /data/pics/auto:/data/pics/auto
