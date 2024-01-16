@@ -20,7 +20,7 @@ COPY package*.json ./
 
 RUN npm install
 
-ADD public /app/public
+COPY public /app/public
 
 COPY . .
 
