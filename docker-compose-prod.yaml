@@ -36,7 +36,7 @@ services:
       - traefik.http.routers.sharp-service.middlewares=sharp-header@docker,https-redirect@docker,compress@docker
       - traefik.http.routers.sharp-serviceSecure.middlewares=sharp-header@docker,https-redirect@docker,compress@docker
 
-      - traefik.http.services.sharp-service.loadbalancer.server.port=${SHARP_PORT}
+      - traefik.http.services.sharp-service.loadbalancer.server.port=3000
 
 networks:
   traefik:
