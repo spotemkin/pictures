@@ -20,7 +20,7 @@ COPY package*.json ./
 
 RUN npm install
 
-COPY server.js . .
+COPY . .
 
 # COPY album-list.txt .  //from server volume
 
