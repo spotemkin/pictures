@@ -1,0 +1,112 @@
+/* App.css */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #121212;
+    color: rgb(190, 190, 190);
+    margin: 0;
+    padding: 10px;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    /* Запрет на прокрутку */
+}
+
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+input[type='text'],
+input[type='range'],
+select {
+    background-color: #202020;
+    border: 1px solid #333333;
+    color: white;
+    padding: 5px;
+    border-radius: 4px;
+}
+
+button {
+    background-color: #333333;
+    color: rgb(190, 190, 190);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #555555;
+}
+
+input[type='range'] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 8px;
+    border-radius: 4px;
+}
+
+input[type='range']::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #f50057;
+    cursor: pointer;
+}
+
+input[type='range']::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #f50057;
+    cursor: pointer;
+}
+
+#image-viewer {
+    max-width: 95%;
+    max-height: 80vh;
+    /* Ограничиваем высоту в пределах body */
+    margin: 10px auto;
+    display: block;
+    border-radius: 10px;
+}
+
+#album-description {
+    margin-top: 10px;
+    font-size: 0.9em;
+    overflow: hidden;
+    /* Запрещаем тексту выходить за пределы элемента */
+}
+
+#filmstrip {
+    display: flex;
+    overflow-x: auto;
+    gap: 5px;
+    padding: 10px 0;
+    margin-top: 10px;
+    max-height: 100px;
+    /* Задаём максимальную высоту для контейнера галереи */
+}
+
+.filmstrip-img {
+    max-width: 100%;
+    /* Фотографии масштабируются в соответствии с размером контейнера */
+    height: auto;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.3s;
+}
+
+.filmstrip-img.selected {
+    border: 2px solid #f50057;
+    opacity: 1;
+}
+
+select {
+    cursor: pointer;
+}

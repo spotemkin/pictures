@@ -14,24 +14,6 @@ document.addEventListener('DOMContentLoaded', function () {
     let intervalId;
     let isPlaying = true;
 
-    const loadImage = src => new Promise((resolve, reject) => {
-        const img = new Image();
-        img.onload = () => {
-            adjustImageAspectRatio(img);
-            resolve();
-        };
-        img.onerror = reject;
-        img.src = src;
-    });
-    
-
-    const loadAlbumImages = async () => {
-        const imagePromises = currentImages.map(imageId =>
-            loadImage(`/image?id=${encodeURIComponent(imageId)}`)
-        );
-        await Promise.all(imagePromises);
-    };
-
     const fetchRandomImages = async (filter = '', widthFilter = '') => {
         try {
             const response = await fetch(`/api/random-images?filter=${encodeURIComponent(filter)}&width=${encodeURIComponent(widthFilter)}`);
@@ -43,7 +25,6 @@ document.addEventListener('DOMContentLoaded', function () {
             currentImages = data.images;
             currentIndex = 0;
             albumDescription.textContent = data.description;
-            await loadAlbumImages();
             populateFilmstrip();
             updateImageDisplay();
             if (isPlaying) {
@@ -56,16 +37,10 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     };
 
-    const calculateFilmstripWidth = () => {
-        const imageWidth = 100; // Assuming each filmstrip image is 100px wide
-        return Math.floor(window.innerWidth / imageWidth);
-    };
-
     const populateFilmstrip = () => {
         filmstrip.innerHTML = '';
-        const maxImages = calculateFilmstripWidth();
-        const startIndex = Math.max(currentIndex - Math.floor(maxImages / 2), 0);
-        const endIndex = Math.min(startIndex + maxImages, currentImages.length);
+        const startIndex = Math.max(currentIndex - 5, 0);
+        const endIndex = Math.min(startIndex + 11, currentImages.length);
         for (let i = startIndex; i < endIndex; i++) {
             const img = document.createElement('img');
             img.className = 'filmstrip-img' + (i === currentIndex ? ' selected' : '');
@@ -77,24 +52,17 @@ document.addEventListener('DOMContentLoaded', function () {
             };
             filmstrip.appendChild(img);
         }
-        filmstrip.style.justifyContent = startIndex === 0 ? 'flex-start' : 'center';
     };
-    function adjustImageAspectRatio(imgElement) {
-        var aspectRatio = imgElement.naturalWidth / imgElement.naturalHeight;
-        imgElement.style.width = aspectRatio >= 1 ? '100%' : 'auto';
-        imgElement.style.height = aspectRatio >= 1 ? 'auto' : '100%';
-    }
+
     const updateImageDisplay = () => {
         if (currentIndex >= currentImages.length) {
             fetchRandomImages(filterInput.value.trim(), widthFilterSelect.value);
         } else {
             const selectedImageId = currentImages[currentIndex];
-            imageView.onload = function() { adjustImageAspectRatio(imageView); };
             imageView.src = `/image?id=${encodeURIComponent(selectedImageId)}`;
-            
             currentIndex++;
             populateFilmstrip();
-            document.querySelectorAll('.filmstrip-img').forEach((img) => {
+            document.querySelectorAll('.filmstrip-img').forEach((img, index) => {
                 img.classList.toggle('selected', selectedImageId === img.dataset.imageId);
             });
         }
@@ -123,17 +91,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     };
 
-    // Touch events for filmstrip on mobile devices
-    let touchStartX = 0;
-    filmstrip.addEventListener('touchstart', (e) => {
-        touchStartX = e.touches[0].clientX;
-    }, false);
-
-    filmstrip.addEventListener('touchmove', (e) => {
-        const touchEndX = e.touches[0].clientX;
-        filmstrip.scrollLeft += touchStartX - touchEndX;
-        touchStartX = touchEndX;
-    }, false);
     speedSlider.addEventListener('change', startSlideshow);
     togglePlayButton.addEventListener('click', togglePlay);
     nextAlbumButton.addEventListener('click', goToNextAlbum);

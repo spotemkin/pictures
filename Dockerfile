@@ -14,7 +14,7 @@ RUN echo "ARG PIC_SERVER_PORT=${PIC_SERVER_PORT}"
 RUN echo "ARG PIC_CLIENT_PORT=${PIC_CLIENT_PORT}"
 
 # for debug
-RUN ls -la
+RUN ls -la /app
 
 COPY package*.json ./
 

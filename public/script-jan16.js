@@ -16,14 +16,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const loadImage = src => new Promise((resolve, reject) => {
         const img = new Image();
-        img.onload = () => {
-            adjustImageAspectRatio(img);
-            resolve();
-        };
+        img.onload = resolve;
         img.onerror = reject;
         img.src = src;
     });
-    
 
     const loadAlbumImages = async () => {
         const imagePromises = currentImages.map(imageId =>
@@ -43,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function () {
             currentImages = data.images;
             currentIndex = 0;
             albumDescription.textContent = data.description;
-            await loadAlbumImages();
+await loadAlbumImages();
             populateFilmstrip();
             updateImageDisplay();
             if (isPlaying) {
@@ -77,21 +73,14 @@ document.addEventListener('DOMContentLoaded', function () {
             };
             filmstrip.appendChild(img);
         }
-        filmstrip.style.justifyContent = startIndex === 0 ? 'flex-start' : 'center';
+filmstrip.style.justifyContent = startIndex === 0 ? 'flex-start' : 'center';
     };
-    function adjustImageAspectRatio(imgElement) {
-        var aspectRatio = imgElement.naturalWidth / imgElement.naturalHeight;
-        imgElement.style.width = aspectRatio >= 1 ? '100%' : 'auto';
-        imgElement.style.height = aspectRatio >= 1 ? 'auto' : '100%';
-    }
     const updateImageDisplay = () => {
         if (currentIndex >= currentImages.length) {
             fetchRandomImages(filterInput.value.trim(), widthFilterSelect.value);
         } else {
             const selectedImageId = currentImages[currentIndex];
-            imageView.onload = function() { adjustImageAspectRatio(imageView); };
             imageView.src = `/image?id=${encodeURIComponent(selectedImageId)}`;
-            
             currentIndex++;
             populateFilmstrip();
             document.querySelectorAll('.filmstrip-img').forEach((img) => {
@@ -123,7 +112,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     };
 
-    // Touch events for filmstrip on mobile devices
+// Touch events for filmstrip on mobile devices
     let touchStartX = 0;
     filmstrip.addEventListener('touchstart', (e) => {
         touchStartX = e.touches[0].clientX;
