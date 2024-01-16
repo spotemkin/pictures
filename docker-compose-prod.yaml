@@ -7,17 +7,42 @@ services:
     restart: always
     volumes:
       - /data/pics/auto:/data/pics/auto
-      - /data/pics/sys:/data/pics/sys
     networks:
       - traefik
 
 
   pic-client:
-    build: ./public
+    image: nginx:latest
     container_name: pic-client
     restart: always
-    # ports: //not needed direct access to PIC_CLIENT_PORT
-      # - ${PIC_CLIENT_PORT}:${PIC_CLIENT_PORT} //not needed direct access to PIC_CLIENT_PORT
+    volumes:
+      - /data/pics/sys/nginx-data/:/data/static:ro
+      - /data/pics/sys/nginx-log/:/var/log/nginx
+    command:
+      - /bin/sh
+      - -c
+      - |
+        echo "server {
+          listen ${PIC_CLIENT_PORT};
+          server_name localhost;
+
+          access_log /var/log/nginx/access.log;
+          error_log /var/log/nginx/error.log;
+
+          location / {
+            root /data/static;
+            index  index.html index.htm;
+            try_files $uri $uri/ =404;
+            etag on;
+            if_modified_since before;
+            expires 30d;
+            add_header Cache-Control 'public, max-age=2592000';
+          }
+          error_page   500 502 503 504  /50x.html;
+          location = /50x.html {
+            root /data/static;
+          }
+        }" > /etc/nginx/conf.d/default.conf && nginx -g "daemon off;"
     networks:
       - traefik
     labels:

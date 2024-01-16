@@ -27,15 +27,15 @@ jobs:
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v2
         with:
-          # registry: ghcr.io
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Generate Docker tags
+      - name: Tags
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: sergeypotemkin/pictures
+          images: ghcr.io/${{ github.repository }}
           tags: |
             latest
             type=sha
@@ -52,20 +52,8 @@ jobs:
             ALBUM_LIST_PATH=${{ vars.ALBUM_LIST_PATH }}
             PIC_CLIENT_PORT=${{ vars.PIC_CLIENT_PORT }}
           push: true
-          # tags: spotemkin/pictures:pic-main
-          # labels: ${{ steps.meta.outputs.labels }}
           tags: ${{ steps.meta.outputs.tags }}
-          no-cache: true
-
-      - name: Build and push pic-client
-        uses: docker/build-push-action@v3.2.0
-        with:
-          context: ./public
-          file: ./public/Dockerfile
-          push: true
-          # tags: spotemkin/pictures:pic-client
-          # labels: ${{ steps.meta.outputs.labels }}
-          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
           no-cache: true
 
       - name: Copy Docker and docker-compose files to server
@@ -78,8 +66,23 @@ jobs:
           port: ${{ vars.SSH_PORT }}
           username: ${{ vars.SSH_USER }}
           key: ${{ secrets.DEV_SERVER_KEY }}
-          source: "Dockerfile, public/Dockerfile, docker-compose-prod.yaml, nginx/default.conf"
+          source: "Dockerfile, docker-compose-prod.yaml"
           target: /srv/pic-project
+          overwrite: true
+          debug: true
+
+      - name: Copy public folder to server
+        env:
+          ALBUM_LIST_PATH: ${{ vars.ALBUM_LIST_PATH }}
+          PIC_CLIENT_PORT: ${{ vars.PIC_CLIENT_PORT }}
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ vars.MAIN_DOMAIN }}
+          port: ${{ vars.SSH_PORT }}
+          username: ${{ vars.SSH_USER }}
+          key: ${{ secrets.DEV_SERVER_KEY }}
+          source: "public"
+          target: /data/pics/sys/nginx-data
           overwrite: true
           debug: true
 
