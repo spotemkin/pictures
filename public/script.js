@@ -23,7 +23,6 @@ document.addEventListener('DOMContentLoaded', function () {
         img.onerror = reject;
         img.src = src;
     });
-    
 
     const loadAlbumImages = async () => {
         const imagePromises = currentImages.map(imageId =>
@@ -91,7 +90,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const selectedImageId = currentImages[currentIndex];
             imageView.onload = function() { adjustImageAspectRatio(imageView); };
             imageView.src = `/image?id=${encodeURIComponent(selectedImageId)}`;
-            
+
             currentIndex++;
             populateFilmstrip();
             document.querySelectorAll('.filmstrip-img').forEach((img) => {
