@@ -13,6 +13,9 @@ RUN echo "ARG ALBUM_LIST_PATH=${ALBUM_LIST_PATH}"
 RUN echo "ARG PIC_SERVER_PORT=${PIC_SERVER_PORT}"
 RUN echo "ARG PIC_CLIENT_PORT=${PIC_CLIENT_PORT}"
 
+# for debug
+RUN ls -la
+
 COPY package*.json ./
 
 RUN npm install

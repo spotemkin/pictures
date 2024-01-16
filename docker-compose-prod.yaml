@@ -32,16 +32,16 @@ services:
           location / {
             root /data/static;
             index  index.html index.htm;
-            try_files $uri $uri/ =404;
+            # try_files $uri $uri/ =404; // (action error in uri variable)
             etag on;
             if_modified_since before;
             expires 30d;
             add_header Cache-Control 'public, max-age=2592000';
           }
-          error_page   500 502 503 504  /50x.html;
-          location = /50x.html {
-            root /data/static;
-          }
+          # error_page   500 502 503 504  /50x.html;
+          # mlocation = /50x.html {
+            # root /data/static;
+          # }
         }" > /etc/nginx/conf.d/default.conf && nginx -g "daemon off;"
     networks:
       - traefik
