@@ -47,3 +47,23 @@ DOCKERHUB REMOTE PUBLICATION:
 
 END
 
+nginx copy
+
+
+      - name: Copy public folder to server
+        env:
+          ALBUM_LIST_PATH: ${{ vars.ALBUM_LIST_PATH }}
+          PIC_CLIENT_PORT: ${{ vars.PIC_CLIENT_PORT }}
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ vars.MAIN_DOMAIN }}
+          port: ${{ vars.SSH_PORT }}
+          username: ${{ vars.SSH_USER }}
+          key: ${{ secrets.DEV_SERVER_KEY }}
+          source: "public/*"
+          target: /data/pics/sys/nginx-data/
+          overwrite: true
+          debug: true
+
+
+END
