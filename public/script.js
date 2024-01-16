@@ -137,6 +137,11 @@ document.addEventListener('DOMContentLoaded', function () {
     togglePlayButton.addEventListener('click', togglePlay);
     nextAlbumButton.addEventListener('click', goToNextAlbum);
     filterButton.addEventListener('click', () => fetchRandomImages(filterInput.value.trim(), widthFilterSelect.value));
+    filterInput.addEventListener('keypress', (e) => {
+        if (e.keyCode === 13) {
+            fetchRandomImages(filterInput.value.trim(), widthFilterSelect.value);
+        }
+    });
     widthFilterSelect.addEventListener('change', () => fetchRandomImages(filterInput.value.trim(), widthFilterSelect.value));
 
     fetchRandomImages();
