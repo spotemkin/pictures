@@ -42,7 +42,11 @@
             <option value="MORE!">2601 px and more</option>
         </select>
         <button id="filter-button">Search</button>
-        <input type="range" id="speed-slider" min="1000" max="10000" value="2000" step="any">
+        <div id="delay-switch" style="width: 10%;">
+            <label><input type="radio" name="delay" value="10000"> 10 </label>
+            <label><input type="radio" name="delay" value="5000" checked> 5 </label>
+            <label><input type="radio" name="delay" value="2000"> 2 </label>
+        </div>
         <button id="toggle-play">Pause</button>
         <button id="next-album">Next Album</button>
     </div>

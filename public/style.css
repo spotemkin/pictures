@@ -1,99 +1,129 @@
-/* App.css */
+/* Updated styles for imola.io */
 body {
     font-family: 'Arial', sans-serif;
-    background-color: #121212; /* Dark background */
-    color: rgb(190, 190, 190); /* White text */
+    background-color: #121212;
+    color: rgb(190, 190, 190);
     margin: 0;
-    padding: 10px;
+    padding: 0; /* Removed padding to allow full width */
 }
 
+/* Enlarged and full-width top menu */
 .controls {
     display: flex;
     justify-content: center;
-    gap: 10px; /* Space between control elements */
-    margin-bottom: 10px;
+    gap: 12px;
+    margin-bottom: 12px;
+    width: 100%;
+    font-size: 1.2em; /* Increase font size by 20% */
+    padding: 10px; /* Padding inside the controls for spacing */
 }
 
+/* Adjusting input, range, and select elements */
 input[type='text'], input[type='range'], select {
-    background-color: #202020; /* Dark background for input and select */
-    border: 1px solid #333333; /* Border for elements */
-    color: white; /* Text color */
-    padding: 5px;
-    border-radius: 4px; /* Rounded corners */
+    background-color: #202020;
+    border: 1px solid #333333;
+    color: white;
+    padding: 6px;
+    border-radius: 4px;
 }
 
+/* Larger buttons with transition */
 button {
-    background-color: #333333; /* Dark background for buttons */
+    background-color: #333333;
     color: rgb(190, 190, 190);
     border: none;
-    padding: 10px 20px;
-    border-radius: 4px; /* Rounded corners */
-    cursor: pointer; /* Hand cursor on hover */
-    transition: background-color 0.3s; /* Background color transition for button */
+    padding: 12px 24px; /* Increased padding */
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
 
 button:hover {
-    background-color: #555555; /* Lighter on hover */
+    background-color: #555555;
 }
 
+/* Range input adjustments */
 input[type='range'] {
-    -webkit-appearance: none; /* Remove default style in Chrome */
-    width: 100%; /* Full width */
-    height: 8px; /* Slider height */
-    border-radius: 4px; /* Rounded corners for slider */
+    -webkit-appearance: none;
+    width: 100%;
+    height: 10px; /* Increased height */
+    border-radius: 4px;
 }
 
 input[type='range']::-webkit-slider-thumb {
-    -webkit-appearance: none; /* Remove default style in Chrome for thumb */
+    -webkit-appearance: none;
     appearance: none;
-    width: 20px; /* Thumb width */
-    height: 20px; /* Thumb height */
-    border-radius: 50%; /* Round thumb */
-    background: #f50057; /* Thumb color */
-    cursor: pointer; /* Hand cursor on hover */
+    width: 24px; /* Increased thumb size */
+    height: 24px;
+    border-radius: 50%;
+    background: #f50057;
+    cursor: pointer;
 }
 
 input[type='range']::-moz-range-thumb {
-    width: 20px; /* Thumb width */
-    height: 20px; /* Thumb height */
-    border-radius: 50%; /* Round thumb */
-    background: #f50057; /* Thumb color */
-    cursor: pointer; /* Hand cursor on hover */
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #f50057;
+    cursor: pointer;
 }
 
+/* Image viewer styles */
 #image-viewer {
-    max-width: 95%; /* Maximum image width */
-    margin: 10px auto; /* Center image */
-    display: block; /* Block display */
-    border-radius: 10px; /* Rounded corners for image */
+    max-width: 95vw;
+    height: 50vh;
+    margin: 10px auto;
+    display: block;
+    border-radius: 10px;
+    object-fit: cover;
 }
 
+/* Centered and enlarged album title */
 #album-description {
     margin-top: 10px;
-    font-size: 0.9em; /* Smaller font size for description */
+    font-size: 1.2em; /* Increased font size */
+    text-align: center; /* Center alignment */
 }
 
+/* Filmstrip styles */
 #filmstrip {
     display: flex;
     overflow-x: auto;
     gap: 5px;
     padding: 10px 0;
     margin-top: 10px;
+    width: 100%; /* Ensure full width */
 }
 
 .filmstrip-img {
-    width: 100px; /* Adjust the width as needed */
-    height: auto;
+    width: 20vw;
+    height: 15vh;
     cursor: pointer;
     opacity: 0.6;
     transition: opacity 0.3s;
+    object-fit: cover;
 }
 
 .filmstrip-img.selected {
-    border: 2px solid #f50057; /* Highlight color */
+    border: 2px solid #f50057;
     opacity: 1;
 }
 
 select {
-    cursor: pointer; /* Hand cursor on hover */
+    cursor: pointer;
+}
+
+/* Delay switch styling */
+#delay-switch {
+    display: flex;
+    justify-content: space-between;
+}
+
+#delay-switch label {
+    color: white;
+    cursor: pointer;
+}
+
+input[type='radio'] {
+    margin-right: 5px;
 }
