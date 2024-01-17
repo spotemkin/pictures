@@ -1,18 +1,22 @@
 document.addEventListener('DOMContentLoaded', function () {
+    // Element references
     const imageView = document.getElementById('image-viewer');
     const albumDescription = document.getElementById('album-description');
-    // Removed speedSlider as it's replaced by radio buttons
     const togglePlayButton = document.getElementById('toggle-play');
     const nextAlbumButton = document.getElementById('next-album');
     const filterInput = document.getElementById('filter-input');
     const filterButton = document.getElementById('filter-button');
     const widthFilterSelect = document.getElementById('width-filter');
     const filmstrip = document.getElementById('filmstrip');
+    const detailsLink = document.getElementById('details-link');
+    const contactInfo = document.getElementById('contact-info');
 
+    // State variables
     let currentImages = [];
     let currentIndex = 0;
     let intervalId;
     let isPlaying = true;
+    let isFullScreen = false;
 
     // Function to load an image and adjust its aspect ratio
     const loadImage = src => new Promise((resolve, reject) => {
@@ -83,7 +87,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         filmstrip.style.justifyContent = startIndex === 0 ? 'flex-start' : 'center';
     };
-
     // Function to adjust image aspect ratio
     function adjustImageAspectRatio(imgElement) {
         var aspectRatio = imgElement.naturalWidth / imgElement.naturalHeight;
@@ -91,14 +94,13 @@ document.addEventListener('DOMContentLoaded', function () {
         imgElement.style.height = aspectRatio < 1 ? '100%' : 'auto';
     }
 
-    // Function to update the display
-    // of the currently selected image
+    // Function to update the display of the currently selected image
     const updateImageDisplay = () => {
         if (currentIndex >= currentImages.length) {
             fetchRandomImages(filterInput.value.trim(), widthFilterSelect.value);
         } else {
             const selectedImageId = currentImages[currentIndex];
-            imageView.onload = function() { adjustImageAspectRatio(imageView); };
+            imageView.onload = function () { adjustImageAspectRatio(imageView); };
             imageView.src = `/image?id=${encodeURIComponent(selectedImageId)}`;
 
             currentIndex++;
@@ -162,17 +164,51 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('input[name="delay"]').forEach(radio => {
         radio.addEventListener('change', startSlideshow);
     });
-
     // Existing event listeners
     togglePlayButton.addEventListener('click', togglePlay);
     nextAlbumButton.addEventListener('click', goToNextAlbum);
     filterButton.addEventListener('click', () => fetchRandomImages(filterInput.value.trim(), widthFilterSelect.value));
     filterInput.addEventListener('keypress', (e) => {
-        if (e.keyCode === 13) {
+        if (e.keyCode === 13) { // Enter key
             fetchRandomImages(filterInput.value.trim(), widthFilterSelect.value);
         }
     });
     widthFilterSelect.addEventListener('change', () => fetchRandomImages(filterInput.value.trim(), widthFilterSelect.value));
+
+    // New functionality: Toggle full screen mode on click/tap
+    imageView.addEventListener('click', toggleFullScreenMode);
+
+    // Function to toggle full screen mode
+    function toggleFullScreenMode() {
+        if (!isFullScreen) {
+            // Enter full screen
+            if (imageView.requestFullscreen) {
+                imageView.requestFullscreen();
+            } else if (imageView.webkitRequestFullscreen) { // Safari
+                imageView.webkitRequestFullscreen();
+            } else if (imageView.msRequestFullscreen) { // IE11
+                imageView.msRequestFullscreen();
+            }
+            isFullScreen = true;
+        } else {
+            // Exit full screen
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) { // Safari
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) { // IE11
+                document.msExitFullscreen();
+            }
+            isFullScreen = false;
+        }
+        // Update the image display when toggling full screen
+        updateImageDisplay();
+    }
+
+    detailsLink.addEventListener('click', function(event) {
+        event.preventDefault();
+        contactInfo.style.display = contactInfo.style.display === 'none' ? 'block' : 'none';
+    });
 
     // Initial fetch of images
     fetchRandomImages();

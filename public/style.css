@@ -142,3 +142,29 @@ input[type='radio'] {
     min-width: 120px;
     /* Set a fixed minimum width */
 }
+/* New styles for contact details */
+.contact-details {
+    text-align: center;
+    margin-top: 20px;
+}
+
+#details-link {
+    color: #f50057;
+    cursor: pointer;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+#contact-info {
+    color: #ffffff;
+    background-color: #202020;
+    padding: 15px;
+    border-radius: 8px;
+    max-width: 80%;
+    margin: 0 auto;
+    text-align: left;
+}
+
+#contact-info p {
+    margin: 10px 0;
+}
