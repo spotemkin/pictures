@@ -4,6 +4,12 @@ services:
   pic_main:
     build: .
     container_name: pic_main
+    environment:
+      - EMAIL=${EMAIL}
+      - PIC_DOMAIN=${PIC_DOMAIN}
+      - MAIN_DOMAIN=${MAIN_DOMAIN}
+      - ALBUM_LIST_PATH=${ALBUM_LIST_PATH}
+      - PIC_CLIENT_PORT=${PIC_CLIENT_PORT}
     restart: always
     volumes:
       - /data/pics/auto:/data/pics/auto
@@ -37,7 +43,7 @@ services:
       - traefik.http.routers.express-service.middlewares=express-header@docker,https-redirect@docker,compress@docker
       - traefik.http.routers.express-serviceSecure.middlewares=express-header@docker,https-redirect@docker,compress@docker
 
-      - traefik.http.services.express-service.loadbalancer.server.port=3000
+      - traefik.http.services.express-service.loadbalancer.server.port=${PIC_SERVER_PORT}
 
 networks:
   traefik:
