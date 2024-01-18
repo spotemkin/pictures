@@ -133,9 +133,9 @@ input[type='radio'] {
     margin-right: 5px;
 }
 
-/* Ensuring Play/Pause buttons remain the same size /
-    #toggle-play {
-    min-width: 120px; / Set a fixed minimum width */
+/* Ensuring Play/Pause buttons remain the same size */
+    toggle-play {
+    min-width: 120px; / Set a fixed minimum width
 }
 
 #next-album {
