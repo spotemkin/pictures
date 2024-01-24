@@ -17,36 +17,26 @@ function generateRandomId() {
     return id;
 }
 
-function getPreviewImagePath(originalPath) {
-    const directory = path.dirname(originalPath);
-    const filename = path.basename(originalPath);
-    const extensionIndex = filename.lastIndexOf('.');
-    const name = filename.substring(0, extensionIndex);
-    const extension = filename.substring(extensionIndex);
-    return path.join(directory.replace('autopics', 'auto-prv'), `${name}-prv${extension}`);
-}
-
 async function initializeAlbumData() {
     try {
         const data = await fs.readFile(albumDataPath, 'utf8');
         data.split('\n').forEach(line => {
             const parts = line.split(';');
             if (parts.length < 5) {
-                console.warn(`Invalid line: ${line}`);
+                console.warn(`pass wrong type string: ${line}`);
                 return;
             }
             const [imagePath, width, height, , description] = parts;
             const imageId = generateRandomId();
             imageDetails.set(imageId, {
                 path: imagePath,
-                previewPath: getPreviewImagePath(imagePath),
                 width: parseInt(width, 10),
                 height: parseInt(height, 10),
                 description: description ? description.trim() : parts.slice(4).join(' ').trim()
             });
         });
     } catch (err) {
-        console.error('Error initializing album data:', err);
+        console.error('Err with init album data:', err);
     }
 }
 
@@ -61,7 +51,7 @@ function filterImages(images, filterKeywords, sizeFilter) {
 
     return images.filter(({ width, height, description }) => {
         const descriptionMatch = !filterKeywords.length || filterKeywords.every(keyword => description.toLowerCase().includes(keyword));
-        let sizeMatch = true;
+        let sizeMatch = true; // Default to true if no size filter is applied
 
         if (sizeFilter && sizeRanges[sizeFilter]) {
             const { min, max } = sizeRanges[sizeFilter];
@@ -98,18 +88,15 @@ app.get('/api/random-images', async (req, res) => {
     const filteredImages = filterImages(randomAlbumImages, filterKeywords, widthFilter);
 
     res.json({
-        images: filteredImages.map(({ id, previewPath }) => ({ id, previewPath })),
+        images: filteredImages.map(image => image.id),
         description: randomAlbumImages[0].description
     });
 });
 
 app.get('/image', (req, res) => {
     const imageId = req.query.id;
-    const preview = req.query.preview === 'true';
-
     if (imageDetails.has(imageId)) {
-        const imagePath = preview ? imageDetails.get(imageId).previewPath : imageDetails.get(imageId).path;
-        res.sendFile(imagePath);
+        res.sendFile(imageDetails.get(imageId).path);
     } else {
         res.status(404).send('Image not found');
     }

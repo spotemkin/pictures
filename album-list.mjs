@@ -1,3 +1,5 @@
+// проходит d:\autopics и создаёт текстовое описание для каждого файла: путь, размер, теги
+
 import fs from 'fs';
 import path from 'path';
 import sharp from 'sharp';
@@ -7,12 +9,13 @@ const directoryPath = 'd:\\autopics';
 const queue = new PQueue({ concurrency: 100 });
 const outputStream = fs.createWriteStream('album-list-wind.txt', { flags: 'a' });
 
+const formatName = (name) => name.replace(/[_-]/g, ' ');
+
 const processFile = async (filePath, directoryName) => {
     try {
         const fileStats = await fs.promises.stat(filePath);
         const imageSize = await sharp(filePath).metadata();
-        const fileName = path.parse(filePath).name.replace(/-/g, ' ');
-        const directoryNameFormatted = path.parse(directoryName).name.replace(/-/g, ' ');
+        const directoryNameFormatted = formatName(directoryName);
         const fileDetails = `${filePath};${imageSize.width};${imageSize.height};${fileStats.size};${directoryNameFormatted};\n`;
         outputStream.write(fileDetails);
     } catch (error) {

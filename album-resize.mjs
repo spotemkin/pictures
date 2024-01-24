@@ -1,3 +1,5 @@
+// Проходит по d:\autopics и создаёт превьюшки не более 160*120 для всех кантинок и сохраняет в d"\auto-prv
+
 import fs from 'fs';
 import path from 'path';
 import sharp from 'sharp';
