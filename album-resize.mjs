@@ -7,7 +7,7 @@ import PQueue from 'p-queue';
 
 const sourceDirectoryPath = 'd:\\autopics';
 const destinationDirectoryPath = 'd:\\auto-prv';
-const queue = new PQueue({ concurrency: 100 });
+const queue = new PQueue({ concurrency: 32 });
 
 const resizeAndSaveImage = async (sourcePath, destinationPath) => {
     try {
