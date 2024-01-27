@@ -101,12 +101,19 @@ input[type='range']::-moz-range-thumb {
 }
 
 .filmstrip-img {
+    max-width: 160px;
+    max-height: 160px;
     width: 20vw;
     height: 15vh;
     cursor: pointer;
     opacity: 0.6;
-    transition: opacity 0.3s;
+    transition: opacity 0.3s, transform 0.3s;
     object-fit: cover;
+}
+
+.filmstrip-img:hover {
+    opacity: 0.8;
+    transform: scale(1.05);
 }
 
 .filmstrip-img.selected {
@@ -117,6 +124,7 @@ input[type='range']::-moz-range-thumb {
 select {
     cursor: pointer;
 }
+
 
 /* Delay switch styling */
 #delay-switch {
