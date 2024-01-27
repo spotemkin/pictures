@@ -78,9 +78,9 @@ jobs:
 
           script: |
             cd /srv/pic-project/
-            docker stop pic_main
-            docker rm pic_main
-            docker system prune -f
+            # docker stop pic_main
+            # docker rm pic_main
+            # docker system prune -f
             export EMAIL=${{ vars.EMAIL }}
             export PIC_DOMAIN=${{ vars.PIC_DOMAIN }}
             export MAIN_DOMAIN=${{ vars.MAIN_DOMAIN }}
@@ -89,7 +89,7 @@ jobs:
             export PIC_SERVER_PORT=${{ vars.PIC_SERVER_PORT }}
             docker-compose -f docker-compose-prod.yaml pull
             docker-compose -f docker-compose-prod.yaml down
-            docker-compose -f docker-compose-prod.yaml up -d
+            docker-compose -f docker-compose-prod.yaml up --build -d
           host: ${{ vars.MAIN_HOST }}
           port: ${{ vars.SSH_PORT }}
           username: ${{ vars.SSH_USER }}
