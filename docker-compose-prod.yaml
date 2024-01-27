@@ -48,6 +48,15 @@ services:
 
       - traefik.http.services.express-service.loadbalancer.server.port=${PIC_SERVER_PORT}
 
+      # New router and middleware for www redirection
+      - traefik.http.routers.www-redirect.rule=Host(`www.${PIC_DOMAIN}`)
+      - traefik.http.routers.www-redirect.entrypoints=web,webSecure
+      - traefik.http.routers.www-redirect.middlewares=www-redirect@docker
+      - traefik.http.middlewares.www-redirect.redirectregex.regex=^https?://www\\.(.+)
+      - traefik.http.middlewares.www-redirect.redirectregex.replacement=https://$${1}
+      - traefik.http.middlewares.www-redirect.redirectregex.permanent=true
+
+
 networks:
   traefik:
     external: true
