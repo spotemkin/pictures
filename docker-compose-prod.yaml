@@ -10,7 +10,7 @@ services:
       - MAIN_DOMAIN=${MAIN_DOMAIN}
       - MAIN_HOST=${MAIN_HOST}
       - ALBUM_LIST_PATH=${ALBUM_LIST_PATH}
-      - PIC_CLIENT_PORT=${PIC_CLIENT_PORT}
+      - PIC_SERVER_PORT=${PIC_SERVER_PORT}
     restart: always
     volumes:
       - /data/pics/auto:/data/pics/auto

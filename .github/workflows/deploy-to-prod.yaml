@@ -44,7 +44,7 @@ jobs:
           MAIN_DOMAIN: ${{ vars.MAIN_DOMAIN }}
           MAIN_HOST: ${{ vars.MAIN_HOST }}
           ALBUM_LIST_PATH: ${{ vars.ALBUM_LIST_PATH }}
-          PIC_CLIENT_PORT: ${{ vars.PIC_CLIENT_PORT }}
+          PIC_SERVER_PORT: ${{ vars.PIC_SERVER_PORT }}
         with:
           context: .
           file: ./Dockerfile
@@ -57,7 +57,7 @@ jobs:
             MAIN_DOMAIN=${{ vars.MAIN_DOMAIN }}
             MAIN_HOST=${{ vars.MAIN_HOST }}
             ALBUM_LIST_PATH=${{ vars.ALBUM_LIST_PATH }}
-            PIC_CLIENT_PORT=${{ vars.PIC_CLIENT_PORT }}
+            PIC_SERVER_PORT=${{ vars.PIC_SERVER_PORT }}
           no-cache: true
 
       - name: Copy Docker and docker-compose files to server
@@ -86,7 +86,7 @@ jobs:
             export MAIN_DOMAIN=${{ vars.MAIN_DOMAIN }}
             export MAIN_HOST=${{ vars.MAIN_HOST }}
             export ALBUM_LIST_PATH=${{ vars.ALBUM_LIST_PATH }}
-            export PIC_CLIENT_PORT=${{ vars.PIC_CLIENT_PORT }}
+            export PIC_SERVER_PORT=${{ vars.PIC_SERVER_PORT }}
             docker-compose -f docker-compose-prod.yaml pull
             docker-compose -f docker-compose-prod.yaml down
             docker-compose -f docker-compose-prod.yaml up -d
