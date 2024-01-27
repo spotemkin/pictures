@@ -13,6 +13,7 @@ services:
     restart: always
     volumes:
       - /data/pics/auto:/data/pics/auto
+      - /data/pics/auto-prv:/data/pics/auto-prv
       - /data/pics/sys/album-data:/data/pics/sys/album-data
       - /data/pics/sys/http-data:/data/pics/sys/http-data
       - /srv/pic-project/public:/app/public
