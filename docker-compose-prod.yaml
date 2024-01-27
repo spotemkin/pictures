@@ -46,8 +46,8 @@ services:
       - traefik.http.routers.www-redirect.middlewares=www-redirect@docker
 
       # middleware for redirect
-      - traefik.http.middlewares.www-redirect.redirectregex.regex=^https://www\\.(.+)
-      - traefik.http.middlewares.www-redirect.redirectregex.replacement=https://$${1}
+      - traefik.http.middlewares.www-redirect.redirectregex.regex=^https://www.(.*)
+      - traefik.http.middlewares.www-redirect.redirectregex.replacement=https://$$1
       - traefik.http.middlewares.www-redirect.redirectregex.permanent=true
 
       # Middleware for security headers
@@ -59,8 +59,8 @@ services:
       - traefik.http.middlewares.express-header.headers.stsPreload=true
 
       # Enter middleware
-      - traefik.http.routers.express-service.middlewares=express-header@docker,https-redirect@docker,www-redirect@docker
-      - traefik.http.routers.express-serviceSecure.middlewares=express-header@docker,https-redirect@docker,www-redirect@docker
+      - traefik.http.routers.express-service.middlewares=express-header@docker,https-redirect@docker
+      - traefik.http.routers.express-serviceSecure.middlewares=express-header@docker,https-redirect@docker
 
 
 networks:
