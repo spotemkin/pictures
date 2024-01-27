@@ -17,6 +17,7 @@ services:
       - /data/pics/auto-prv:/data/pics/auto-prv
       - /data/pics/sys/album-data:/data/pics/sys/album-data
       - /data/pics/sys/http-data:/data/pics/sys/http-data
+      - /data/pics/sys/express-logs:/app/logs
       - /srv/pic-project/public:/app/public
     networks:
       - traefik

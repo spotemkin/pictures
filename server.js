@@ -8,7 +8,7 @@ const port = process.env.PIC_SERVER_PORT;
 const albumDataPath = process.env.ALBUM_LIST_PATH || 'album-list-ubnt.txt';
 
 const morgan = require('morgan');
-const accessLogStream = fs.createWriteStream(path.join(__dirname, 'exp-access.txt'), { flags: 'a' });
+const accessLogStream = fs.createWriteStream(path.join(__dirname, 'logs/exp-access.txt'), { flags: 'a' });
 
 app.use(morgan('combined', { stream: accessLogStream }));
 
@@ -153,7 +153,7 @@ app.get('/image', (req, res) => {
 app.use(express.static('public'));
 
 app.use((err, req, res, next) => {
-    const errorLogStream = fs.createWriteStream(path.join(__dirname, 'exp-error.txt'), { flags: 'a' });
+    const errorLogStream = fs.createWriteStream(path.join(__dirname, 'logs/exp-error.txt'), { flags: 'a' });
     errorLogStream.write(`[${new Date().toISOString()}] Error: ${err.message}\nStack: ${err.stack}\n`);
     res.status(500).send('Internal Server Error');
 });
