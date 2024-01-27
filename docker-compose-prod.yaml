@@ -32,7 +32,7 @@ services:
       # TLS и Secure
       - traefik.http.routers.expressSecure.rule=Host(`${PIC_DOMAIN}`) || Host(`www.${PIC_DOMAIN}`)
       - traefik.http.routers.expressSecure.entrypoints=webSecure
-      - traefik.http.routers.expressSecure.service=expressSecure
+      - traefik.http.routers.expressSecure.service=express
       - traefik.http.routers.expressSecure.tls.certresolver=letsEncrypt
 
       # Middleware for HTTPS
