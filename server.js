@@ -1,11 +1,16 @@
 require('dotenv').config({ path: '.env.local' });
 const express = require('express');
-const fs = require('fs').promises;
+const fs = require('fs');
 const path = require('path');
 
 const app = express();
 const port = process.env.PIC_SERVER_PORT;
 const albumDataPath = process.env.ALBUM_LIST_PATH || 'album-list-ubnt.txt';
+
+const morgan = require('morgan');
+const accessLogStream = fs.createWriteStream(path.join(__dirname, 'exp-access.txt'), { flags: 'a' });
+
+app.use(morgan('combined', { stream: accessLogStream }));
 
 let imageDetails = new Map();
 
@@ -17,9 +22,9 @@ function generateRandomId() {
     return id;
 }
 
-async function initializeAlbumData() {
+function initializeAlbumData() {
     try {
-        const data = await fs.readFile(albumDataPath, 'utf8');
+        const data = fs.readFileSync(albumDataPath, 'utf8');
         data.split('\n').forEach(line => {
             const parts = line.split(';');
             if (parts.length < 5) {
@@ -35,7 +40,6 @@ async function initializeAlbumData() {
                 description: description ? description.trim() : parts.slice(4).join(' ').trim()
             });
 
-            // Создаем путь и ID для превьюшки
             const previewPath = imagePath.replace('/auto/', '/auto-prv/').replace(/(\.[^.]+)$/, '-prv$1');
             const previewId = imageId + '-prv';
             imageDetails.set(previewId, {
@@ -47,6 +51,7 @@ async function initializeAlbumData() {
         console.error('Error initializing album data:', err);
     }
 }
+
 
 
 
@@ -146,6 +151,12 @@ app.get('/image', (req, res) => {
 });
 
 app.use(express.static('public'));
+
+app.use((err, req, res, next) => {
+    const errorLogStream = fs.createWriteStream(path.join(__dirname, 'exp-error.txt'), { flags: 'a' });
+    errorLogStream.write(`[${new Date().toISOString()}] Error: ${err.message}\nStack: ${err.stack}\n`);
+    res.status(500).send('Internal Server Error');
+});
 
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
