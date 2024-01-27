@@ -8,6 +8,7 @@ services:
       - EMAIL=${EMAIL}
       - PIC_DOMAIN=${PIC_DOMAIN}
       - MAIN_DOMAIN=${MAIN_DOMAIN}
+      - MAIN_HOST=${MAIN_HOST}
       - ALBUM_LIST_PATH=${ALBUM_LIST_PATH}
       - PIC_CLIENT_PORT=${PIC_CLIENT_PORT}
     restart: always

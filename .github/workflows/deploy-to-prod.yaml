@@ -42,6 +42,7 @@ jobs:
           EMAIL: ${{ vars.EMAIL }}
           PIC_DOMAIN: ${{ vars.PIC_DOMAIN }}
           MAIN_DOMAIN: ${{ vars.MAIN_DOMAIN }}
+          MAIN_HOST: ${{ vars.MAIN_HOST }}
           ALBUM_LIST_PATH: ${{ vars.ALBUM_LIST_PATH }}
           PIC_CLIENT_PORT: ${{ vars.PIC_CLIENT_PORT }}
         with:
@@ -54,6 +55,7 @@ jobs:
             EMAIL=${{ vars.EMAIL }}
             PIC_DOMAIN=${{ vars.PIC_DOMAIN }}
             MAIN_DOMAIN=${{ vars.MAIN_DOMAIN }}
+            MAIN_HOST=${{ vars.MAIN_HOST }}
             ALBUM_LIST_PATH=${{ vars.ALBUM_LIST_PATH }}
             PIC_CLIENT_PORT=${{ vars.PIC_CLIENT_PORT }}
           no-cache: true
@@ -61,7 +63,7 @@ jobs:
       - name: Copy Docker and docker-compose files to server
         uses: appleboy/scp-action@master
         with:
-          host: ${{ vars.MAIN_DOMAIN }}
+          host: ${{ vars.MAIN_HOST }}
           port: ${{ vars.SSH_PORT }}
           username: ${{ vars.SSH_USER }}
           key: ${{ secrets.DEV_SERVER_KEY }}
@@ -82,12 +84,13 @@ jobs:
             export EMAIL=${{ vars.EMAIL }}
             export PIC_DOMAIN=${{ vars.PIC_DOMAIN }}
             export MAIN_DOMAIN=${{ vars.MAIN_DOMAIN }}
+            export MAIN_HOST=${{ vars.MAIN_HOST }}
             export ALBUM_LIST_PATH=${{ vars.ALBUM_LIST_PATH }}
             export PIC_CLIENT_PORT=${{ vars.PIC_CLIENT_PORT }}
             docker-compose -f docker-compose-prod.yaml pull
             docker-compose -f docker-compose-prod.yaml down
             docker-compose -f docker-compose-prod.yaml up -d
-          host: ${{ vars.MAIN_DOMAIN }}
+          host: ${{ vars.MAIN_HOST }}
           port: ${{ vars.SSH_PORT }}
           username: ${{ vars.SSH_USER }}
           key: ${{ secrets.DEV_SERVER_KEY }}
