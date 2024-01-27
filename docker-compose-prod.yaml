@@ -22,15 +22,35 @@ services:
     networks:
       - traefik
     labels:
+
+       # Основные настройки
       - traefik.enable=true
+      - traefik.http.services.express-service.loadbalancer.server.port=${PIC_SERVER_PORT}
       - traefik.http.routers.express-service.rule=Host(`${PIC_DOMAIN}`)
-      - traefik.http.routers.express-service.service=express-service
       - traefik.http.routers.express-service.entrypoints=web
+      - traefik.http.routers.express-service.service=express-service
+
+      # TLS и Secure роутер
       - traefik.http.routers.express-serviceSecure.rule=Host(`${PIC_DOMAIN}`)
-      - traefik.http.routers.express-serviceSecure.service=express-service
       - traefik.http.routers.express-serviceSecure.entrypoints=webSecure
+      - traefik.http.routers.express-serviceSecure.service=express-service
       - traefik.http.routers.express-serviceSecure.tls.certresolver=letsEncrypt
 
+      # Middleware для HTTPS
+      - traefik.http.middlewares.https-redirect.redirectScheme.scheme=https
+      - traefik.http.middlewares.https-redirect.redirectScheme.permanent=true
+
+      # Новый роутер для редиректа с www
+      - traefik.http.routers.www-redirect.rule=Host(`www.${PIC_DOMAIN}`)
+      - traefik.http.routers.www-redirect.entrypoints=web,webSecure
+      - traefik.http.routers.www-redirect.middlewares=www-redirect@docker
+
+      # Новый middleware для редиректа
+      - traefik.http.middlewares.www-redirect.redirectregex.regex=^https://www\\.(.+)
+      - traefik.http.middlewares.www-redirect.redirectregex.replacement=https://$${1}
+      - traefik.http.middlewares.www-redirect.redirectregex.permanent=true
+
+      # Middleware для заголовков безопасности
       - traefik.http.middlewares.express-header.headers.FrameDeny=true
       - traefik.http.middlewares.express-header.headers.browserXssFilter=true
       - traefik.http.middlewares.express-header.headers.contentTypeNosniff=true
@@ -38,23 +58,13 @@ services:
       - traefik.http.middlewares.express-header.headers.stsIncludeSubdomains=true
       - traefik.http.middlewares.express-header.headers.stsPreload=true
 
-      - traefik.http.middlewares.https-redirect.redirectScheme.scheme=https
-      - traefik.http.middlewares.https-redirect.redirectScheme.permanent=true
+      # Применение middleware
+      - traefik.http.routers.express-service.middlewares=express-header@docker,https-redirect@docker
+      - traefik.http.routers.express-serviceSecure.middlewares=express-header@docker
 
-      - traefik.http.middlewares.compress.compress=true
+      - traefik.http.routers.express-service.middlewares=express-header@docker,https-redirect@docker,www-redirect@docker
+      - traefik.http.routers.express-serviceSecure.middlewares=express-header@docker,https-redirect@docker,www-redirect@docker
 
-      - traefik.http.routers.express-service.middlewares=express-header@docker,https-redirect@docker,compress@docker
-      - traefik.http.routers.express-serviceSecure.middlewares=express-header@docker,https-redirect@docker,compress@docker
-
-      - traefik.http.services.express-service.loadbalancer.server.port=${PIC_SERVER_PORT}
-
-      # New router and middleware for www redirection
-      - traefik.http.routers.www-redirect.rule=Host(`www.${PIC_DOMAIN}`)
-      - traefik.http.routers.www-redirect.entrypoints=web,webSecure
-      - traefik.http.routers.www-redirect.middlewares=www-redirect@docker
-      - traefik.http.middlewares.www-redirect.redirectregex.regex=^https://www\\.(.+)
-      - traefik.http.middlewares.www-redirect.redirectregex.replacement=https://$${1}
-      - traefik.http.middlewares.www-redirect.redirectregex.permanent=true
 
 networks:
   traefik:
