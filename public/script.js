@@ -206,7 +206,7 @@ document.addEventListener('DOMContentLoaded', function () {
         updateImageDisplay();
     }
 
-    detailsLink.addEventListener('click', function(event) {
+    detailsLink.addEventListener('click', function (event) {
         event.preventDefault();
         contactInfo.style.display = contactInfo.style.display === 'none' ? 'block' : 'none';
     });
