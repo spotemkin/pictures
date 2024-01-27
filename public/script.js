@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function () {
         for (let i = startIndex; i < endIndex; i++) {
             const img = document.createElement('img');
             img.className = 'filmstrip-img' + (i === currentIndex ? ' selected' : '');
-            img.src = `/image?id=${encodeURIComponent(currentImages[i])}`; // Используем превьюшки
+            img.src = `/image?id=${encodeURIComponent(currentImages[i])}`; // using preview
             img.dataset.imageId = currentImages[i];
             img.onclick = () => {
                 currentIndex = i;
@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function () {
             fetchRandomImages(filterInput.value.trim(), widthFilterSelect.value);
         } else {
             const previewImageId = currentImages[currentIndex];
-            const originalImageId = previewImageId.replace('-prv', ''); // Получаем ID оригинального изображения
+            const originalImageId = previewImageId.replace('-prv', ''); // recieve ID original image
             imageView.onload = function () { adjustImageAspectRatio(imageView); };
             imageView.src = `/image?id=${encodeURIComponent(originalImageId)}`;
 

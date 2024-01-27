@@ -108,9 +108,9 @@ app.get('/api/random-images-preview', async (req, res) => {
     const widthFilter = req.query.width;
     const albums = new Map();
 
-    // Собираем альбомы, используя превью изображений
+    // Get album using preview images
     imageDetails.forEach((details, id) => {
-        if (!id.endsWith('-prv')) return; // Работаем только с превьюшками
+        if (!id.endsWith('-prv')) return; // work only with preview
 
         const albumPath = path.dirname(details.path);
         if (!albums.has(albumPath)) {
@@ -119,7 +119,7 @@ app.get('/api/random-images-preview', async (req, res) => {
         albums.get(albumPath).push({ id, ...details });
     });
 
-    // Фильтрация и выбор случайного альбома
+    // filtr random album
     let filteredAlbums = Array.from(albums.entries()).filter(([albumPath, images]) => {
         return filterImages(images, filterKeywords, widthFilter).length > 0;
     });
