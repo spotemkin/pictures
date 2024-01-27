@@ -25,25 +25,19 @@ services:
 
        # Main
       - traefik.enable=true
-      - traefik.http.services.express-service.loadbalancer.server.port=${PIC_SERVER_PORT}
-      - traefik.http.routers.express-service.rule=Host(`${PIC_DOMAIN}`)
-      - traefik.http.routers.express-service.entrypoints=web
-      - traefik.http.routers.express-service.service=express-service
+      - traefik.http.routers.express.rule=Host(`${PIC_DOMAIN}`) || Host(`www.${PIC_DOMAIN}`)
+      - traefik.http.routers.express.entrypoints=web
+      - traefik.http.routers.express.service=express
 
       # TLS и Secure
-      - traefik.http.routers.express-serviceSecure.rule=Host(`${PIC_DOMAIN}`)
-      - traefik.http.routers.express-serviceSecure.entrypoints=webSecure
-      - traefik.http.routers.express-serviceSecure.service=express-service
-      - traefik.http.routers.express-serviceSecure.tls.certresolver=letsEncrypt
+      - traefik.http.routers.expressSecure.rule=Host(`${PIC_DOMAIN}`) || Host(`www.${PIC_DOMAIN}`)
+      - traefik.http.routers.expressSecure.entrypoints=webSecure
+      - traefik.http.routers.expressSecure.service=expressSecure
+      - traefik.http.routers.expressSecure.tls.certresolver=letsEncrypt
 
       # Middleware for HTTPS
       - traefik.http.middlewares.https-redirect.redirectScheme.scheme=https
       - traefik.http.middlewares.https-redirect.redirectScheme.permanent=true
-
-      # router for www redirect
-      - traefik.http.routers.www-redirect.rule=Host(`www.${PIC_DOMAIN}`)
-      - traefik.http.routers.www-redirect.entrypoints=web,webSecure
-      - traefik.http.routers.www-redirect.middlewares=www-redirect@docker
 
       # middleware for redirect
       - traefik.http.middlewares.www-redirect.redirectregex.regex=^https://www.(.*)
@@ -59,9 +53,10 @@ services:
       - traefik.http.middlewares.express-header.headers.stsPreload=true
 
       # Enter middleware
-      - traefik.http.routers.express-service.middlewares=express-header@docker,https-redirect@docker
-      - traefik.http.routers.express-serviceSecure.middlewares=express-header@docker,https-redirect@docker
+      - traefik.http.routers.express.middlewares=express-header@docker,https-redirect@docker,www-redirectw@docker
+      - traefik.http.routers.expressSecure.middlewares=express-header@docker,https-redirect@docker,www-redirect@docker
 
+      - traefik.http.services.express.loadbalancer.server.port=${PIC_SERVER_PORT}
 
 networks:
   traefik:
