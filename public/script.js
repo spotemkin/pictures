@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Function to fetch random images based on filters
     const fetchRandomImages = async (filter = '', widthFilter = '') => {
         try {
-            const response = await fetch(`/api/random-images?filter=${encodeURIComponent(filter)}&width=${encodeURIComponent(widthFilter)}`);
+            const response = await fetch(`/api/random-images-preview?filter=${encodeURIComponent(filter)}&width=${encodeURIComponent(widthFilter)}`);
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.error || 'Error fetching images');
@@ -49,7 +49,6 @@ document.addEventListener('DOMContentLoaded', function () {
             currentImages = data.images;
             currentIndex = 0;
             albumDescription.textContent = data.description;
-            await loadAlbumImages();
             populateFilmstrip();
             updateImageDisplay();
             if (isPlaying) {
@@ -77,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function () {
         for (let i = startIndex; i < endIndex; i++) {
             const img = document.createElement('img');
             img.className = 'filmstrip-img' + (i === currentIndex ? ' selected' : '');
-            img.src = `/image?id=${encodeURIComponent(currentImages[i])}`;
+            img.src = `/image?id=${encodeURIComponent(currentImages[i])}`; // Используем превьюшки
             img.dataset.imageId = currentImages[i];
             img.onclick = () => {
                 currentIndex = i;
@@ -87,6 +86,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         filmstrip.style.justifyContent = startIndex === 0 ? 'flex-start' : 'center';
     };
+
     // Function to adjust image aspect ratio
     function adjustImageAspectRatio(imgElement) {
         var aspectRatio = imgElement.naturalWidth / imgElement.naturalHeight;
@@ -99,14 +99,15 @@ document.addEventListener('DOMContentLoaded', function () {
         if (currentIndex >= currentImages.length) {
             fetchRandomImages(filterInput.value.trim(), widthFilterSelect.value);
         } else {
-            const selectedImageId = currentImages[currentIndex];
+            const previewImageId = currentImages[currentIndex];
+            const originalImageId = previewImageId.replace('-prv', ''); // Получаем ID оригинального изображения
             imageView.onload = function () { adjustImageAspectRatio(imageView); };
-            imageView.src = `/image?id=${encodeURIComponent(selectedImageId)}`;
+            imageView.src = `/image?id=${encodeURIComponent(originalImageId)}`;
 
             currentIndex++;
             populateFilmstrip();
             document.querySelectorAll('.filmstrip-img').forEach((img) => {
-                img.classList.toggle('selected', selectedImageId === img.dataset.imageId);
+                img.classList.toggle('selected', previewImageId === img.dataset.imageId);
             });
         }
     };

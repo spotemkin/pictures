@@ -5,7 +5,7 @@ const path = require('path');
 
 const app = express();
 const port = process.env.PIC_SERVER_PORT;
-const albumDataPath = process.env.ALBUM_LIST_PATH || 'album-list.txt';
+const albumDataPath = process.env.ALBUM_LIST_PATH || 'album-list-ubnt.txt';
 
 let imageDetails = new Map();
 
@@ -23,7 +23,7 @@ async function initializeAlbumData() {
         data.split('\n').forEach(line => {
             const parts = line.split(';');
             if (parts.length < 5) {
-                console.warn(`pass wrong type string: ${line}`);
+                console.warn(`Incorrect string format: ${line}`);
                 return;
             }
             const [imagePath, width, height, , description] = parts;
@@ -34,11 +34,21 @@ async function initializeAlbumData() {
                 height: parseInt(height, 10),
                 description: description ? description.trim() : parts.slice(4).join(' ').trim()
             });
+
+            // Создаем путь и ID для превьюшки
+            const previewPath = imagePath.replace('/auto/', '/auto-prv/').replace(/(\.[^.]+)$/, '-prv$1');
+            const previewId = imageId + '-prv';
+            imageDetails.set(previewId, {
+                ...imageDetails.get(imageId),
+                path: previewPath
+            });
         });
     } catch (err) {
-        console.error('Err with init album data:', err);
+        console.error('Error initializing album data:', err);
     }
 }
+
+
 
 function filterImages(images, filterKeywords, sizeFilter) {
     const sizeRanges = {
@@ -76,6 +86,40 @@ app.get('/api/random-images', async (req, res) => {
         albums.get(albumPath).push({ id, ...details });
     });
 
+    let filteredAlbums = Array.from(albums.entries()).filter(([albumPath, images]) => {
+        return filterImages(images, filterKeywords, widthFilter).length > 0;
+    });
+
+    if (filteredAlbums.length === 0) {
+        return res.status(404).json({ error: 'No album found' });
+    }
+
+    const [randomAlbumPath, randomAlbumImages] = filteredAlbums[Math.floor(Math.random() * filteredAlbums.length)];
+    const filteredImages = filterImages(randomAlbumImages, filterKeywords, widthFilter);
+
+    res.json({
+        images: filteredImages.map(image => image.id),
+        description: randomAlbumImages[0].description
+    });
+});
+
+app.get('/api/random-images-preview', async (req, res) => {
+    const filterKeywords = req.query.filter ? req.query.filter.toLowerCase().split(' ') : [];
+    const widthFilter = req.query.width;
+    const albums = new Map();
+
+    // Собираем альбомы, используя превью изображений
+    imageDetails.forEach((details, id) => {
+        if (!id.endsWith('-prv')) return; // Работаем только с превьюшками
+
+        const albumPath = path.dirname(details.path);
+        if (!albums.has(albumPath)) {
+            albums.set(albumPath, []);
+        }
+        albums.get(albumPath).push({ id, ...details });
+    });
+
+    // Фильтрация и выбор случайного альбома
     let filteredAlbums = Array.from(albums.entries()).filter(([albumPath, images]) => {
         return filterImages(images, filterKeywords, widthFilter).length > 0;
     });
