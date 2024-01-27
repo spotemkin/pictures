@@ -78,6 +78,7 @@ app.get('/api/random-images', async (req, res) => {
     const widthFilter = req.query.width;
     const albums = new Map();
 
+    // Get album using original images
     imageDetails.forEach((details, id) => {
         const albumPath = path.dirname(details.path);
         if (!albums.has(albumPath)) {
@@ -86,6 +87,7 @@ app.get('/api/random-images', async (req, res) => {
         albums.get(albumPath).push({ id, ...details });
     });
 
+    // filtr random album
     let filteredAlbums = Array.from(albums.entries()).filter(([albumPath, images]) => {
         return filterImages(images, filterKeywords, widthFilter).length > 0;
     });
