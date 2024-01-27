@@ -106,37 +106,34 @@ app.get('/api/random-images', async (req, res) => {
 });
 
 app.get('/api/random-preview', async (req, res) => {
-    const filterKeywords = req.query.filter ? req.query.filter.toLowerCase().split(' ') : [];
-    const widthFilter = req.query.width;
-    const albums = new Map();
-
-    // Get album using preview images
-    imageDetails.forEach((details, id) => {
-        if (!id.endsWith('-prv')) return; // work only with preview
-
-        const albumPath = path.dirname(details.path);
-        if (!albums.has(albumPath)) {
-            albums.set(albumPath, []);
-        }
-        albums.get(albumPath).push({ id, ...details });
-    });
-
-    // filtr random album
-    let filteredAlbums = Array.from(albums.entries()).filter(([albumPath, images]) => {
-        return filterImages(images, filterKeywords, widthFilter).length > 0;
-    });
-
-    if (filteredAlbums.length === 0) {
-        return res.status(404).json({ error: 'No album found' });
-    }
-
-    const [randomAlbumPath, randomAlbumImages] = filteredAlbums[Math.floor(Math.random() * filteredAlbums.length)];
-    const filteredImages = filterImages(randomAlbumImages, filterKeywords, widthFilter);
-
-    res.json({
-        images: filteredImages.map(image => image.id),
-        description: randomAlbumImages[0].description
-    });
+    try {
+        const filterKeywords = req.query.filter ? req.query.filter.toLowerCase().split(' ') : [];
+           const widthFilter = req.query.width;
+           const albums = new Map();
+           // Get album using preview images
+           imageDetails.forEach((details, id) => {
+               if (!id.endsWith('-prv')) return; // work only with preview
+               const albumPath = path.dirname(details.path);
+               if (!albums.has(albumPath)) {
+                   albums.set(albumPath, []);
+               }
+               albums.get(albumPath).push({ id, ...details });
+           });
+           // filtr random album
+           let filteredAlbums = Array.from(albums.entries()).filter(([albumPath, images]) => {
+               return filterImages(images, filterKeywords, widthFilter).length > 0;
+           });
+           if (filteredAlbums.length === 0) {
+               return res.status(404).json({ error: 'No album found' });
+           }
+           const [randomAlbumPath, randomAlbumImages] = filteredAlbums[Math.floor(Math.random() * filteredAlbums.length)];
+           const filteredImages = filterImages(randomAlbumImages, filterKeywords, widthFilter);
+           res.json({
+               images: filteredImages.map(image => image.id),
+               description: randomAlbumImages[0].description
+           });
+       } catch (err)
+       {console.log(err)}
 });
 
 app.get('/image', (req, res) => {
