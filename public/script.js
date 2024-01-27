@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Function to fetch random images based on filters
     const fetchRandomImages = async (filter = '', widthFilter = '') => {
         try {
-            const response = await fetch(`/api/random-images-preview?filter=${encodeURIComponent(filter)}&width=${encodeURIComponent(widthFilter)}`);
+            const response = await fetch(`/api/random-preview?filter=${encodeURIComponent(filter)}&width=${encodeURIComponent(widthFilter)}`);
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.error || 'Error fetching images');

@@ -105,7 +105,7 @@ app.get('/api/random-images', async (req, res) => {
     });
 });
 
-app.get('/api/random-images-preview', async (req, res) => {
+app.get('/api/random-preview', async (req, res) => {
     const filterKeywords = req.query.filter ? req.query.filter.toLowerCase().split(' ') : [];
     const widthFilter = req.query.width;
     const albums = new Map();
