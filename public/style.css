@@ -73,14 +73,13 @@ input[type='range']::-moz-range-thumb {
     cursor: pointer;
 }
 
-/* Image viewer styles */
 #image-viewer {
-    max-width: 95vw;
-    height: 50vh;
-    margin: 10px auto;
+    max-height: calc(100vh - 60px - var(--filmstrip-height));
+    object-fit: contain;
+    width: 100%;
     display: block;
-    border-radius: 10px;
-    object-fit: cover;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 /* Centered and enlarged album title */

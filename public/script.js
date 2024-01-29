@@ -89,9 +89,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Function to adjust image aspect ratio
     function adjustImageAspectRatio(imgElement) {
-        var aspectRatio = imgElement.naturalWidth / imgElement.naturalHeight;
-        imgElement.style.width = aspectRatio >= 1 ? '100%' : 'auto';
-        imgElement.style.height = aspectRatio < 1 ? '100%' : 'auto';
+        let containerHeight = window.innerHeight - document.querySelector('.controls').offsetHeight - document.querySelector('#album-description').offsetHeight;
+        imgElement.style.maxHeight = `${containerHeight}px`;
+        imgElement.style.maxWidth = '100%';
+        imgElement.style.width = 'auto';
+        imgElement.style.height = 'auto';
     }
 
     // Function to update the display of the currently selected image
