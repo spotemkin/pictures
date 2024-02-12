@@ -11,11 +11,11 @@ body {
 .controls {
     display: flex;
     justify-content: center;
-    gap: 6px;
-    margin-bottom: 6px;
+    gap: 12px;
+    margin-bottom: 12px;
     width: 100%;
     font-size: 1.2em;
-    padding: 5px;
+    padding: 10px;
 }
 
 /* Adjusting input, range, and select elements */
@@ -34,7 +34,7 @@ button {
     background-color: #333333;
     color: rgb(190, 190, 190);
     border: none;
-    padding: 10px 20px;
+    padding: 12px 24px;
     /* Increased padding */
     border-radius: 4px;
     cursor: pointer;
