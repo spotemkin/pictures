@@ -1,4 +1,4 @@
-// проходит d:\auto-prv и создаёт текстовое описание для каждого файла: путь, размер, теги в album-list-wind-prv.txt
+// make TAGS (from name), path, size info for all JPG in d:\auto-prv and save in txt
 import fs from 'fs';
 import path from 'path';
 import sharp from 'sharp';

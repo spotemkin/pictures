@@ -1,4 +1,4 @@
-// Проходит по d:\autopics и создаёт превьюшки не более 160*120 для всех кантинок и сохраняет в d:\auto-prv
+// Make preview (160*120) for all jpg in d:\autopics and save in d:\auto-prv
 
 import fs from 'fs';
 import path from 'path';

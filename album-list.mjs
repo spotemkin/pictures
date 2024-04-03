@@ -1,4 +1,4 @@
-// проходит d:\autopics и создаёт текстовое описание для каждого файла: путь, размер, теги
+// make TAGS (from name), path, size info for all JPG in d:\autopics and save in txt
 
 import fs from 'fs';
 import path from 'path';

@@ -1,5 +1,5 @@
 const workerpool = require('workerpool');
-const fs = require('fs').promises; // Используем асинхронные версии функций fs
+const fs = require('fs').promises;
 
 const checkJPGIntegrity = async (filePath) => {
     const data = await fs.readFile(filePath);
