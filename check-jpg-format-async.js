@@ -1,3 +1,5 @@
+// check all pic for jpg format
+// run node --max-old-space-size=32768 ./check-jpg-format-async.js
 const workerpool = require('workerpool');
 const fs = require('fs');
 const path = require('path');
@@ -18,7 +20,7 @@ const getAllFiles = (dir, fileList = []) => {
 const files = getAllFiles('D:\\autopics\\');
 
 // Reduce the number of workers to manage memory usage
-const pool = workerpool.pool('./worker-async.js', { maxWorkers: 8 });
+const pool = workerpool.pool('./worker-async.js', { maxWorkers: 16 });
 let lastLoggedTime = Date.now();
 
 const promises = files.map((file, index) => {
