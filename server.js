@@ -12,7 +12,7 @@ const accessLogStream = fs.createWriteStream(path.join(__dirname, 'logs/exp-acce
 
 app.use(morgan('combined', { stream: accessLogStream }));
 
-//generate a random unique identifier for each image
+// Generate a random unique identifier for each image
 let imageDetails = new Map();
 
 function generateRandomId() {
@@ -23,7 +23,7 @@ function generateRandomId() {
     return id;
 }
 
-// Initialize album data
+// Initialize album data using a structured Map
 function initializeAlbumData() {
     try {
         const data = fs.readFileSync(albumDataPath, 'utf8');
@@ -36,9 +36,14 @@ function initializeAlbumData() {
 
             // Destructuring the line into relevant parts
             const [imagePath, width, height, , description] = parts;
+            const albumPath = path.dirname(imagePath);
             const imageId = generateRandomId();
-            // Storing image details in the map
-            imageDetails.set(imageId, {
+            // Storing image details in the map with album path as key
+            if (!imageDetails.has(albumPath)) {
+                imageDetails.set(albumPath, []);
+            }
+            imageDetails.get(albumPath).push({
+                id: imageId,
                 path: imagePath,
                 width: parseInt(width, 10),
                 height: parseInt(height, 10),
@@ -48,9 +53,12 @@ function initializeAlbumData() {
             // Generate preview path and id, then store them as well
             const previewPath = imagePath.replace('/auto/', '/auto-prv/').replace(/(\.[^.]+)$/, '-prv$1');
             const previewId = imageId + '-prv';
-            imageDetails.set(previewId, {
-                ...imageDetails.get(imageId),
-                path: previewPath
+            imageDetails.get(albumPath).push({
+                id: previewId,
+                path: previewPath,
+                width: parseInt(width, 10),
+                height: parseInt(height, 10),
+                description: description ? description.trim() : parts.slice(4).join(' ').trim()
             });
         });
     } catch (err) {
@@ -91,15 +99,14 @@ app.get('/api/random-images', async (req, res) => {
     const albums = new Map();
 
     // Get album using original images
-    imageDetails.forEach((details, id) => {
-        const albumPath = path.dirname(details.path);
+    imageDetails.forEach((images, albumPath) => {
         if (!albums.has(albumPath)) {
             albums.set(albumPath, []);
         }
-        albums.get(albumPath).push({ id, ...details });
+        albums.get(albumPath).push(...images);
     });
 
-    // filtr random album
+    // Filter random album
     let filteredAlbums = Array.from(albums.entries()).filter(([albumPath, images]) => {
         return filterImages(images, filterKeywords, widthFilter).length > 0;
     });
@@ -124,42 +131,51 @@ app.get('/api/random-preview', async (req, res) => {
     try {
         // Extract filters from query parameters
         const filterKeywords = req.query.filter ? req.query.filter.toLowerCase().split(' ') : [];
-           const widthFilter = req.query.width;
-           const albums = new Map();
-           // Get album using preview images
-           imageDetails.forEach((details, id) => {
-               if (!id.endsWith('-prv')) return; // work only with preview
-               const albumPath = path.dirname(details.path);
-               if (!albums.has(albumPath)) {
-                   albums.set(albumPath, []);
-               }
-               albums.get(albumPath).push({ id, ...details });
-           });
-           // filtr random album
-           let filteredAlbums = Array.from(albums.entries()).filter(([albumPath, images]) => {
-               return filterImages(images, filterKeywords, widthFilter).length > 0;
-           });
-           if (filteredAlbums.length === 0) {
-               return res.status(404).json({ error: 'No album found' });
-           }
+        const widthFilter = req.query.width;
+        const albums = new Map();
+
+        // Get album using preview images
+        imageDetails.forEach((images, albumPath) => {
+            albums.set(albumPath, images.filter(image => image.id.endsWith('-prv')));
+        });
+
+        // Filter random album
+        let filteredAlbums = Array.from(albums.entries()).filter(([albumPath, images]) => {
+            return filterImages(images, filterKeywords, widthFilter).length > 0;
+        });
+
+        if (filteredAlbums.length === 0) {
+            return res.status(404).json({ error: 'No album found' });
+        }
+
         // Select a random album and its preview images
-           const [randomAlbumPath, randomAlbumImages] = filteredAlbums[Math.floor(Math.random() * filteredAlbums.length)];
-           const filteredImages = filterImages(randomAlbumImages, filterKeywords, widthFilter);
+        const [randomAlbumPath, randomAlbumImages] = filteredAlbums[Math.floor(Math.random() * filteredAlbums.length)];
+        const filteredImages = filterImages(randomAlbumImages, filterKeywords, widthFilter);
+
         // Send the filtered preview images in response
-           res.json({
-               images: filteredImages.map(image => image.id),
-               description: randomAlbumImages[0].description
-           });
-       } catch (err)
-       {console.log(err)}
+        res.json({
+            images: filteredImages.map(image => image.id),
+            description: randomAlbumImages[0].description
+        });
+    } catch (err) {
+        console.error('Error during API call:', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
 });
 
 // Endpoint to serve individual images by ID
 app.get('/image', (req, res) => {
     const imageId = req.query.id;
-    if (imageDetails.has(imageId)) {
-        res.sendFile(imageDetails.get(imageId).path);
-    } else {
+    let found = false;
+    imageDetails.forEach(images => {
+        images.forEach(detail => {
+            if (detail.id === imageId) {
+                res.sendFile(detail.path);
+                found = true;
+            }
+        });
+    });
+    if (!found) {
         res.status(404).send('Image not found');
     }
 });
@@ -174,7 +190,7 @@ app.use((err, req, res, next) => {
     res.status(500).send('Internal Server Error');
 });
 
-// catch all uri and return index.html
+// Catch all URI and return index.html
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
