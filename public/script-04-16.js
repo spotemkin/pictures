@@ -10,12 +10,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const filmstrip = document.getElementById('filmstrip');
     const detailsLink = document.getElementById('details-link');
     const contactInfo = document.getElementById('contact-info');
-    const urlPath = window.location.pathname.slice(1);
-    const searchQuery = urlPath.replace(/-/g, ' ');
-
-    if (searchQuery) {
-        filterInput.value = decodeURIComponent(searchQuery);
-    }
 
     // State variables
     let currentImages = [];
@@ -92,12 +86,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         filmstrip.style.justifyContent = startIndex === 0 ? 'flex-start' : 'center';
     };
-
-    // Function update url
-    function updateURL(searchText) {
-        const newUrl = '/' + searchText.trim().replace(/\s+/g, '-').toLowerCase();
-        window.history.pushState({ path: newUrl }, '', newUrl);
-    }
 
     // Function to adjust image aspect ratio
     function adjustImageAspectRatio(imgElement) {
@@ -179,22 +167,13 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('input[name="delay"]').forEach(radio => {
         radio.addEventListener('change', startSlideshow);
     });
-
     // Existing event listeners
     togglePlayButton.addEventListener('click', togglePlay);
     nextAlbumButton.addEventListener('click', goToNextAlbum);
-    filterButton.addEventListener('click', () => {
-        const searchText = filterInput.value.trim();
-        updateURL(searchText);
-        fetchRandomImages(searchText, widthFilterSelect.value);
-    });
-
-    // Handler for pressing the Enter key in the search field to update the URL and perform a search
+    filterButton.addEventListener('click', () => fetchRandomImages(filterInput.value.trim(), widthFilterSelect.value));
     filterInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            const searchText = filterInput.value.trim();
-            updateURL(searchText);
-            fetchRandomImages(searchText, widthFilterSelect.value);
+        if (e.keyCode === 13) { // Enter key
+            fetchRandomImages(filterInput.value.trim(), widthFilterSelect.value);
         }
     });
     widthFilterSelect.addEventListener('change', () => fetchRandomImages(filterInput.value.trim(), widthFilterSelect.value));
@@ -236,7 +215,4 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Initial fetch of images
     fetchRandomImages();
-    if (searchQuery) {
-        fetchRandomImages(searchQuery, widthFilterSelect.value);
-    }
 });

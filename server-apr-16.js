@@ -174,11 +174,6 @@ app.use((err, req, res, next) => {
     res.status(500).send('Internal Server Error');
 });
 
-// catch all uri and return index.html
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
 // Start the server and initialize album data
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
