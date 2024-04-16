@@ -126,15 +126,11 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     };
 
-// Function to start the slideshow only when images are loaded
-const startSlideshow = () => {
-    if (currentImages.length > 0) {
+    // Function to start the slideshow
+    const startSlideshow = () => {
         clearInterval(intervalId);
         intervalId = setInterval(updateImageDisplay, getSelectedDelay());
-    } else {
-        console.log("No images to display, slideshow not started");
-    }
-};
+    };
 
     // Function to toggle the slideshow play/pause state
     const togglePlay = () => {
@@ -238,11 +234,9 @@ const startSlideshow = () => {
         contactInfo.style.display = contactInfo.style.display === 'none' ? 'block' : 'none';
     });
 
-// Fetch images based on the search query if present
-if (searchQuery) {
-    fetchRandomImages(searchQuery, widthFilterSelect.value);
-} else {
-    console.log("No initial search query provided");
-}
-
+    // Initial fetch of images
+    fetchRandomImages();
+    if (searchQuery) {
+        fetchRandomImages(searchQuery, widthFilterSelect.value);
+    }
 });
