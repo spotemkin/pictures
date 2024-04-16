@@ -238,11 +238,12 @@ const startSlideshow = () => {
         contactInfo.style.display = contactInfo.style.display === 'none' ? 'block' : 'none';
     });
 
-// Fetch images based on the search query if present
-if (searchQuery) {
-    fetchRandomImages(searchQuery, widthFilterSelect.value);
-} else {
-    console.log("No initial search query provided");
-}
-
+    // Fetch images based on the search query if present, or fetch random images if no search query
+    if (searchQuery) {
+        fetchRandomImages(searchQuery, widthFilterSelect.value);
+    } else {
+        // There is no initial search query, we start downloading a random album
+        console.log("No initial search query provided, loading a random album.");
+        fetchRandomImages(); // Calling a function without arguments to load random images
+    }
 });
