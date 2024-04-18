@@ -126,11 +126,15 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     };
 
-    // Function to start the slideshow
-    const startSlideshow = () => {
+// Function to start the slideshow only when images are loaded
+const startSlideshow = () => {
+    if (currentImages.length > 0) {
         clearInterval(intervalId);
         intervalId = setInterval(updateImageDisplay, getSelectedDelay());
-    };
+    } else {
+        console.log("No images to display, slideshow not started");
+    }
+};
 
     // Function to toggle the slideshow play/pause state
     const togglePlay = () => {
@@ -234,9 +238,12 @@ document.addEventListener('DOMContentLoaded', function () {
         contactInfo.style.display = contactInfo.style.display === 'none' ? 'block' : 'none';
     });
 
-    // Initial fetch of images
-    fetchRandomImages();
+    // Fetch images based on the search query if present, or fetch random images if no search query
     if (searchQuery) {
         fetchRandomImages(searchQuery, widthFilterSelect.value);
+    } else {
+        // There is no initial search query, we start downloading a random album
+        console.log("No initial search query provided, loading a random album.");
+        fetchRandomImages(); // Calling a function without arguments to load random images
     }
 });
