@@ -28,26 +28,6 @@ document.addEventListener("DOMContentLoaded", function () {
   let isPlaying = true;
   let isFullScreen = false;
 
-  // Function to load an image and adjust its aspect ratio
-  const loadImage = (src) =>
-    new Promise((resolve, reject) => {
-      const img = new Image();
-      img.onload = () => {
-        adjustImageAspectRatio(img);
-        resolve();
-      };
-      img.onerror = reject;
-      img.src = src;
-    });
-
-  // Function to load images for the current album
-  const loadAlbumImages = async () => {
-    const imagePromises = currentImages.map((imageId) =>
-      loadImage(`/image?id=${encodeURIComponent(imageId)}`)
-    );
-    await Promise.all(imagePromises);
-  };
-
   // Function to ensure preview image is ready
   const ensurePreviewImage = async (keyword) => {
     if (!keyword) return; // If no keyword, just return

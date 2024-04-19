@@ -53,12 +53,6 @@ async function ensurePreviewImage(albumKeywords) {
   }
 }
 
-// Setting up the access log stream for logging requests
-const accessLogStream = fs.createWriteStream(
-  path.join(__dirname, "logs/exp-access.txt"),
-  { flags: "a" }
-);
-
 app.use(morgan("combined", { stream: accessLogStream }));
 
 // Generate a random unique identifier for each image
@@ -179,8 +173,10 @@ app.get("/api/random-images", async (req, res) => {
   }
 
   // Select a random album and its images
-  const [randomAlbumPath, randomAlbumImages] =
-    filteredAlbums[Math.floor(Math.random() * filteredAlbums.length)];
+  // const [randomAlbumPath, randomAlbumImages] =
+  //   filteredAlbums[Math.floor(Math.random() * filteredAlbums.length)];
+  const randomAlbumImages =
+    filteredAlbums[Math.floor(Math.random() * filteredAlbums.length)][1];
   const filteredImages = filterImages(
     randomAlbumImages,
     filterKeywords,
@@ -224,8 +220,10 @@ app.get("/api/random-preview", async (req, res) => {
     }
 
     // Select a random album and its preview images
-    const [randomAlbumPath, randomAlbumImages] =
-      filteredAlbums[Math.floor(Math.random() * filteredAlbums.length)];
+    // const [randomAlbumPath, randomAlbumImages] =
+    //   filteredAlbums[Math.floor(Math.random() * filteredAlbums.length)];
+    const randomAlbumImages =
+      filteredAlbums[Math.floor(Math.random() * filteredAlbums.length)][1];
     const filteredImages = filterImages(
       randomAlbumImages,
       filterKeywords,
