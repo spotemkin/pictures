@@ -20,6 +20,18 @@ const loadImage = (src) =>
     img.src = src;
   });
 
+// Select a random album and its images
+// const [randomAlbumPath, randomAlbumImages] =
+//   filteredAlbums[Math.floor(Math.random() * filteredAlbums.length)];
+const randomAlbumImages =
+  filteredAlbums[Math.floor(Math.random() * filteredAlbums.length)][1];
+
+// Select a random album and its preview images
+// const [randomAlbumPath, randomAlbumImages] =
+//   filteredAlbums[Math.floor(Math.random() * filteredAlbums.length)];
+const randomAlbumImages =
+  filteredAlbums[Math.floor(Math.random() * filteredAlbums.length)][1];
+
 async function ensurePreviewImage(albumKeywords) {
   // Reducing the entire request to lowercase to unify processing
   const keywords = albumKeywords
