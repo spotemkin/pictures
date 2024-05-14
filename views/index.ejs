@@ -2,8 +2,8 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>imola.io - Cars Hires SlideShow</title>
-    <link rel="stylesheet" href="style.css" />
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/style.css" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
@@ -14,25 +14,19 @@
     <meta name="msapplication-TileColor" content="#da532c" />
     <meta name="theme-color" content="#ffffff" />
     <!-- Open Graph data -->
-    <meta property="og:title" content="imola.io - Cars Hires SlideShow" />
+    <meta property="og:title" content="<%= title %>" />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://imola.io/" />
-    <meta property="og:image" content="https://imola.io/imola-preview.jpg" />
-    <meta
-      property="og:description"
-      content="Discover high-resolution Cars SlideShow"
-    />
+    <meta property="og:url" content="<%= url %>" />
+    <meta property="og:image" content="<%= image %>" />
+    <meta property="og:description" content="<%= description %>" />
     <meta property="og:site_name" content="Imola.io" />
 
     <!-- Twitter Card data -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="imola.io - Cars Hires SlideShow" />
-    <meta
-      name="twitter:description"
-      content="Discover high-resolution Cars SlideShow"
-    />
-    <meta name="twitter:image" content="https://imola.io/imola-preview.jpg" />
-    <meta name="twitter:url" content="https://imola.io/" />
+    <meta name="twitter:title" content="<%= title %>" />
+    <meta name="twitter:description" content="<%= description %>" />
+    <meta name="twitter:image" content="<%= image %>" />
+    <meta name="twitter:url" content="<%= url %>" />
   </head>
   <body>
     <div class="controls">
@@ -100,6 +94,6 @@
         </p>
       </div>
     </div>
-    <script src="script.js"></script>
+    <script src="/script.js"></script>
   </body>
 </html>

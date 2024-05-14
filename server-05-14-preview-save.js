@@ -12,7 +12,7 @@ const writeFileAsync = util.promisify(fs.writeFile);
 const accessAsync = util.promisify(fs.access);
 
 async function ensurePreviewImage(albumKeywords) {
-  // Converting all keywords to lower case for unified processing
+  // Reducing the entire request to lowercase to unify processing
   const keywords = albumKeywords
     .toLowerCase()
     .split("-")
@@ -26,34 +26,27 @@ async function ensurePreviewImage(albumKeywords) {
     console.log("Preview image already exists:", fullPath);
     return fullPath;
   } catch {
-    // Search for a matching album using all keywords
+    // Search for the corresponding album using all the keywords
     const albumPaths = Array.from(imageDetails.keys());
-    const matchingAlbumPaths = albumPaths.filter((albumPath) =>
+    const matchingAlbumPath = albumPaths.find((albumPath) =>
       keywords.every((keyword) => albumPath.toLowerCase().includes(keyword))
     );
 
-    if (matchingAlbumPaths.length === 0) {
+    if (!matchingAlbumPath) {
       throw new Error(
         "No matching album found for the keywords: " + albumKeywords
       );
     }
 
-    // Selecting a random matching album
-    const randomAlbumPath =
-      matchingAlbumPaths[Math.floor(Math.random() * matchingAlbumPaths.length)];
-    const images = imageDetails.get(randomAlbumPath);
-    const largeImages = images.filter((img) => !img.path.includes("-prv"));
+    const images = imageDetails.get(matchingAlbumPath);
+    const largeImage = images.find((img) => !img.path.includes("-prv"));
 
-    if (largeImages.length === 0) {
-      throw new Error("No large image found in the selected album.");
+    if (!largeImage) {
+      throw new Error("No image found in the selected album.");
     }
 
-    // Selecting a random large image
-    const randomLargeImage =
-      largeImages[Math.floor(Math.random() * largeImages.length)];
-
     // Copying the selected image to the preview directory
-    const imageBuffer = await fs.promises.readFile(randomLargeImage.path);
+    const imageBuffer = await fs.promises.readFile(largeImage.path);
     await writeFileAsync(fullPath, imageBuffer);
     console.log("Created new preview image:", fullPath);
     return fullPath;
