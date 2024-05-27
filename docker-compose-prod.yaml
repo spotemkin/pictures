@@ -3,7 +3,8 @@ version: '3.9'
 services:
   pic_main:
     build: .
-    container_name: pic_main
+    image: "ghcr.io/spotemkin/pictures:latest"
+    # container_name: pic_main
     environment:
       - EMAIL=${EMAIL}
       - PIC_DOMAIN=${PIC_DOMAIN}
