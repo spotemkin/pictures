@@ -2,17 +2,25 @@ require("dotenv").config({ path: ".env.local" });
 const express = require("express");
 const fs = require("fs");
 const path = require("path");
+const util = require("util");
+const morgan = require("morgan");
+
 const app = express();
 const port = process.env.PIC_SERVER_PORT;
 const albumDataPath = process.env.ALBUM_LIST_PATH || "album-list-ubnt.txt";
-const morgan = require("morgan");
-const util = require("util");
 
 const writeFileAsync = util.promisify(fs.writeFile);
 const accessAsync = util.promisify(fs.access);
 
+const accessLogStream = fs.createWriteStream(
+  path.join(__dirname, "logs/exp-access.log"),
+  { flags: "a" }
+);
+app.use(morgan("combined", { stream: accessLogStream }));
+
+let imageDetails = new Map();
+
 async function ensurePreviewImage(albumKeywords) {
-  // Converting all keywords to lower case for unified processing
   const keywords = albumKeywords
     .toLowerCase()
     .split("-")
@@ -26,7 +34,6 @@ async function ensurePreviewImage(albumKeywords) {
     console.log("Preview image already exists:", fullPath);
     return fullPath;
   } catch {
-    // Search for a matching album using all keywords
     const albumPaths = Array.from(imageDetails.keys());
     const matchingAlbumPaths = albumPaths.filter((albumPath) =>
       keywords.every((keyword) => albumPath.toLowerCase().includes(keyword))
@@ -38,7 +45,6 @@ async function ensurePreviewImage(albumKeywords) {
       );
     }
 
-    // Selecting a random matching album
     const randomAlbumPath =
       matchingAlbumPaths[Math.floor(Math.random() * matchingAlbumPaths.length)];
     const images = imageDetails.get(randomAlbumPath);
@@ -48,28 +54,14 @@ async function ensurePreviewImage(albumKeywords) {
       throw new Error("No large image found in the selected album.");
     }
 
-    // Selecting a random large image
     const randomLargeImage =
       largeImages[Math.floor(Math.random() * largeImages.length)];
-
-    // Copying the selected image to the preview directory
     const imageBuffer = await fs.promises.readFile(randomLargeImage.path);
     await writeFileAsync(fullPath, imageBuffer);
     console.log("Created new preview image:", fullPath);
     return fullPath;
   }
 }
-
-// Setting up the access log stream for logging requests
-const accessLogStream = fs.createWriteStream(
-  path.join(__dirname, "logs/exp-access.txt"),
-  { flags: "a" }
-);
-
-app.use(morgan("combined", { stream: accessLogStream }));
-
-// Generate a random unique identifier for each image
-let imageDetails = new Map();
 
 function generateRandomId() {
   let id;
@@ -79,7 +71,6 @@ function generateRandomId() {
   return id;
 }
 
-// Initialize album data using a structured Map
 function initializeAlbumData() {
   try {
     const data = fs.readFileSync(albumDataPath, "utf8");
@@ -90,11 +81,10 @@ function initializeAlbumData() {
         return;
       }
 
-      // Destructuring the line into relevant parts
       const [imagePath, width, height, , description] = parts;
       const albumPath = path.dirname(imagePath);
       const imageId = generateRandomId();
-      // Storing image details in the map with album path as key
+
       if (!imageDetails.has(albumPath)) {
         imageDetails.set(albumPath, []);
       }
@@ -108,7 +98,6 @@ function initializeAlbumData() {
           : parts.slice(4).join(" ").trim(),
       });
 
-      // Generate preview path and id, then store them as well
       const previewPath = imagePath
         .replace("/auto/", "/auto-prv/")
         .replace(/(\.[^.]+)$/, "-prv$1");
@@ -128,7 +117,6 @@ function initializeAlbumData() {
   }
 }
 
-// Function to filter images based on keywords and size
 function filterImages(images, filterKeywords, sizeFilter) {
   const sizeRanges = {
     500: { min: 0, max: 500 },
@@ -139,15 +127,13 @@ function filterImages(images, filterKeywords, sizeFilter) {
   };
 
   return images.filter(({ width, height, description }) => {
-    // Check if image matches the description keywords
     const descriptionMatch =
       !filterKeywords.length ||
       filterKeywords.every((keyword) =>
         description.toLowerCase().includes(keyword)
       );
-    let sizeMatch = true; // Default to true if no size filter is applied
+    let sizeMatch = true;
 
-    // Check if image matches the size filter
     if (sizeFilter && sizeRanges[sizeFilter]) {
       const { min, max } = sizeRanges[sizeFilter];
       const largestDimension = Math.max(width, height);
@@ -158,7 +144,6 @@ function filterImages(images, filterKeywords, sizeFilter) {
   });
 }
 
-// API endpoint to fetch random images based on filters
 app.get("/api/random-images", async (req, res) => {
   const filterKeywords = req.query.filter
     ? req.query.filter.toLowerCase().split(" ")
@@ -166,7 +151,6 @@ app.get("/api/random-images", async (req, res) => {
   const widthFilter = req.query.width;
   const albums = new Map();
 
-  // Get album using original images
   imageDetails.forEach((images, albumPath) => {
     if (!albums.has(albumPath)) {
       albums.set(albumPath, []);
@@ -174,20 +158,15 @@ app.get("/api/random-images", async (req, res) => {
     albums.get(albumPath).push(...images);
   });
 
-  // Filter random album
   let filteredAlbums = Array.from(albums.entries()).filter(
-    ([albumPath, images]) => {
-      return filterImages(images, filterKeywords, widthFilter).length > 0;
-    }
+    ([albumPath, images]) =>
+      filterImages(images, filterKeywords, widthFilter).length > 0
   );
 
   if (filteredAlbums.length === 0) {
     return res.status(404).json({ error: "No album found" });
   }
 
-  // Select a random album and its images
-  // const [randomAlbumPath, randomAlbumImages] =
-  //   filteredAlbums[Math.floor(Math.random() * filteredAlbums.length)];
   const randomAlbumImages =
     filteredAlbums[Math.floor(Math.random() * filteredAlbums.length)][1];
   const filteredImages = filterImages(
@@ -196,24 +175,20 @@ app.get("/api/random-images", async (req, res) => {
     widthFilter
   );
 
-  // Send the filtered images in response
   res.json({
     images: filteredImages.map((image) => image.id),
     description: randomAlbumImages[0].description,
   });
 });
 
-// API endpoint to fetch random previews based on filters
 app.get("/api/random-preview", async (req, res) => {
   try {
-    // Extract filters from query parameters
     const filterKeywords = req.query.filter
       ? req.query.filter.toLowerCase().split(" ")
       : [];
     const widthFilter = req.query.width;
     const albums = new Map();
 
-    // Get album using preview images
     imageDetails.forEach((images, albumPath) => {
       albums.set(
         albumPath,
@@ -221,20 +196,15 @@ app.get("/api/random-preview", async (req, res) => {
       );
     });
 
-    // Filter random album
     let filteredAlbums = Array.from(albums.entries()).filter(
-      ([albumPath, images]) => {
-        return filterImages(images, filterKeywords, widthFilter).length > 0;
-      }
+      ([albumPath, images]) =>
+        filterImages(images, filterKeywords, widthFilter).length > 0
     );
 
     if (filteredAlbums.length === 0) {
       return res.status(404).json({ error: "No album found" });
     }
 
-    // Select a random album and its preview images
-    // const [randomAlbumPath, randomAlbumImages] =
-    //   filteredAlbums[Math.floor(Math.random() * filteredAlbums.length)];
     const randomAlbumImages =
       filteredAlbums[Math.floor(Math.random() * filteredAlbums.length)][1];
     const filteredImages = filterImages(
@@ -243,7 +213,6 @@ app.get("/api/random-preview", async (req, res) => {
       widthFilter
     );
 
-    // Send the filtered preview images in response
     res.json({
       images: filteredImages.map((image) => image.id),
       description: randomAlbumImages[0].description,
@@ -254,7 +223,6 @@ app.get("/api/random-preview", async (req, res) => {
   }
 });
 
-// Endpoint to serve individual images by ID
 app.get("/image", (req, res) => {
   const imageId = req.query.id;
   let found = false;
@@ -283,13 +251,11 @@ app.get("/api/search/:keyword", async (req, res) => {
   }
 });
 
-// Serve static files from the 'public' directory
 app.use(express.static("public"));
 
-// Middleware for handling server-side errors
 app.use((err, req, res, next) => {
   const errorLogStream = fs.createWriteStream(
-    path.join(__dirname, "logs/exp-error.txt"),
+    path.join(__dirname, "logs/exp-error.log"),
     { flags: "a" }
   );
   errorLogStream.write(
@@ -298,12 +264,10 @@ app.use((err, req, res, next) => {
   res.status(500).send("Internal Server Error");
 });
 
-// Catch all URI and return index.html
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-// Start the server and initialize album data
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
   initializeAlbumData();
