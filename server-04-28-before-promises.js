@@ -1,13 +1,16 @@
 require("dotenv").config({ path: ".env.local" });
 const express = require("express");
 const fs = require("fs");
-const fsPromises = fs.promises;
 const path = require("path");
+const util = require("util");
 const morgan = require("morgan");
 
 const app = express();
 const port = process.env.PIC_SERVER_PORT;
 const albumDataPath = process.env.ALBUM_LIST_PATH || "album-list-ubnt.txt";
+
+const writeFileAsync = util.promisify(fs.writeFile);
+const accessAsync = util.promisify(fs.access);
 
 const accessLogStream = fs.createWriteStream(
   path.join(__dirname, "logs/exp-access.log"),
@@ -27,7 +30,7 @@ async function ensurePreviewImage(albumKeywords) {
   const fullPath = path.join(previewDirectory, previewFilename);
 
   try {
-    await fsPromises.access(fullPath, fs.constants.F_OK);
+    await accessAsync(fullPath, fs.constants.F_OK);
     console.log("Preview image already exists:", fullPath);
     return fullPath;
   } catch {
@@ -53,8 +56,8 @@ async function ensurePreviewImage(albumKeywords) {
 
     const randomLargeImage =
       largeImages[Math.floor(Math.random() * largeImages.length)];
-    const imageBuffer = await fsPromises.readFile(randomLargeImage.path);
-    await fsPromises.writeFile(fullPath, imageBuffer);
+    const imageBuffer = await fs.promises.readFile(randomLargeImage.path);
+    await writeFileAsync(fullPath, imageBuffer);
     console.log("Created new preview image:", fullPath);
     return fullPath;
   }
@@ -68,16 +71,14 @@ function generateRandomId() {
   return id;
 }
 
-async function initializeAlbumData() {
+function initializeAlbumData() {
   try {
-    const data = await fsPromises.readFile(albumDataPath, "utf8");
-    const lines = data.split("\n");
-
-    for (const line of lines) {
+    const data = fs.readFileSync(albumDataPath, "utf8");
+    data.split("\n").forEach((line) => {
       const parts = line.split(";");
       if (parts.length < 5) {
         console.warn(`Incorrect string format: ${line}`);
-        continue;
+        return;
       }
 
       const [imagePath, width, height, , description] = parts;
@@ -110,7 +111,7 @@ async function initializeAlbumData() {
           ? description.trim()
           : parts.slice(4).join(" ").trim(),
       });
-    }
+    });
   } catch (err) {
     console.error("Error initializing album data:", err);
   }
@@ -222,16 +223,17 @@ app.get("/api/random-preview", async (req, res) => {
   }
 });
 
-app.get("/image", async (req, res) => {
+app.get("/image", (req, res) => {
   const imageId = req.query.id;
   let found = false;
-  for (const images of imageDetails.values()) {
-    for (const detail of images) {
+  imageDetails.forEach((images) => {
+    images.forEach((detail) => {
       if (detail.id === imageId) {
-        return res.sendFile(path.resolve(detail.path));
+        res.sendFile(detail.path);
+        found = true;
       }
-    }
-  }
+    });
+  });
   if (!found) {
     res.status(404).send("Image not found");
   }

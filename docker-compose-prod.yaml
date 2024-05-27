@@ -21,6 +21,13 @@ services:
       - /srv/pic-project/public:/app/public
     networks:
       - traefik
+
+    deploy:
+      replicas: 8
+      update_config:
+        parallelism: 2
+        delay: 10s
+
     labels:
 
        # Main
@@ -53,10 +60,15 @@ services:
       - traefik.http.middlewares.express-header.headers.stsPreload=true
 
       # Enter middleware
-      - traefik.http.routers.express.middlewares=express-header@docker,https-redirect@docker,www-redirectw@docker
+      - traefik.http.routers.express.middlewares=express-header@docker,https-redirect@docker,www-redirect@docker
       - traefik.http.routers.expressSecure.middlewares=express-header@docker,https-redirect@docker,www-redirect@docker
 
       - traefik.http.services.express.loadbalancer.server.port=${PIC_SERVER_PORT}
+
+      # Sticky sessions
+      - traefik.http.services.express.loadbalancer.sticky.cookie=true
+      - traefik.http.services.express.loadbalancer.sticky.cookie.name=sticky_cookie
+      - traefik.http.services.express.loadbalancer.sticky.cookie.secure=true
 
 networks:
   traefik:
