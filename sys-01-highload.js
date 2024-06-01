@@ -4,8 +4,8 @@ const puppeteer = require("puppeteer");
 
 // Конфигурация
 const ALBUM_LIST_PATH = "album-list-ubnt.txt";
-const BASE_URL = "http://localhost:3000";
-// const BASE_URL = "https://imola.io";
+// const BASE_URL = "http://localhost:3000";
+const BASE_URL = "https://imola.io";
 const CONCURRENT_REQUESTS = 64; // Количество параллельных запросов
 const MIN_VIEW_TIME = 20000; // Минимальное время просмотра в миллисекундах
 const MAX_VIEW_TIME = 200000; // Максимальное время просмотра в миллисекундах
