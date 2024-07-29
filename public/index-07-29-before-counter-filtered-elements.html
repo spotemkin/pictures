@@ -46,27 +46,17 @@
         <option value="MORE!">2601 px and more</option>
       </select>
       <button id="filter-button">Search</button>
-
       <div id="delay-switch" style="width: 10%">
         <label><input type="radio" name="delay" value="10000" /> 10s </label>
-        <label>
-          <input type="radio" name="delay" value="5000" checked /> 5s
-        </label>
+        <label><input type="radio" name="delay" value="5000" checked /> 5s </label>
         <label><input type="radio" name="delay" value="2000" /> 2s </label>
         <label><input type="radio" name="delay" value="500" /> 0.5s </label>
       </div>
       <button id="toggle-play">Pause</button>
       <button id="next-album">Next Album</button>
     </div>
-
-    <div id="counts-container">
-      Found Albums: <span id="album-count">0</span>, Images:
-      <span id="image-count">0</span><br />Showing Album:
-      <span id="album-description">None</span>
-    </div>
     <div id="album-description"></div>
     <img id="image-viewer" src="" alt="Random Album SlideShow" />
-
     <div
       id="album-title-overlay"
       style="

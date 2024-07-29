@@ -86,8 +86,10 @@ input[type='range']::-moz-range-thumb {
 /* Centered and enlarged album title */
 #album-description {
     margin-top: 10px;
-    font-size: 1.2em;
+    font-size: 1em;
     text-align: center;
+    font-weight: bold;
+    color: #5f83e6;
 }
 
 /* Filmstrip styles */
@@ -162,6 +164,21 @@ input[type='radio'] {
     cursor: pointer;
     display: inline-block;
     margin-bottom: 10px;
+}
+
+#counts-container {
+    margin-top: 10px;
+    /* Отступ сверху для пространства */
+    font-size: 1em;
+    color: rgb(190, 190, 190);
+    text-align: center;
+    /* Выравнивание по центру */
+}
+
+#album-count,
+#image-count {
+    font-weight: bold;
+    color: #5f83e6;
 }
 
 #contact-info {

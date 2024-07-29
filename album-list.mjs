@@ -6,7 +6,7 @@ import sharp from "sharp";
 import PQueue from "p-queue";
 
 const directoryPath = "d:\\auto-create";
-const queue = new PQueue({ concurrency: 100 });
+const queue = new PQueue({ concurrency: 64 });
 const outputStream = fs.createWriteStream("album-list-wind.txt", {
   flags: "a",
 });

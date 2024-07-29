@@ -12,8 +12,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const urlPath = window.location.pathname.slice(1);
   const searchQuery = urlPath.replace(/-/g, " ");
   const lowerCasePath = urlPath.toLowerCase();
-  const albumCountElement = document.getElementById("album-count");
-  const imageCountElement = document.getElementById("image-count");
 
   if (urlPath !== lowerCasePath) {
     window.history.replaceState(null, "", lowerCasePath);
@@ -57,16 +55,12 @@ document.addEventListener("DOMContentLoaded", function () {
       currentImages = data.images;
       currentIndex = 0;
       albumDescription.textContent = data.description;
-      albumCountElement.textContent = `${data.matchingAlbums}`;
-      imageCountElement.textContent = `${data.matchingImages}`;
       populateFilmstrip();
       updateImageDisplay();
       if (isPlaying) startSlideshow();
     } catch (error) {
       console.error("Error fetching images:", error);
       albumDescription.textContent = error.message;
-      albumCountElement.textContent = "";
-      imageCountElement.textContent = "";
       currentImages = [];
     }
   };

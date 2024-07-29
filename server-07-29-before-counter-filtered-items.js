@@ -200,12 +200,6 @@ app.get("/api/random-preview", async (req, res) => {
         filterImages(images, filterKeywords, widthFilter).length > 0
     );
 
-    const matchingAlbumsCount = filteredAlbums.length;
-    const matchingImagesCount = filteredAlbums.reduce(
-      (acc, [, images]) => acc + images.length,
-      0
-    );
-
     if (filteredAlbums.length === 0) {
       return res.status(404).json({ error: "No album found" });
     }
@@ -221,8 +215,6 @@ app.get("/api/random-preview", async (req, res) => {
     res.json({
       images: filteredImages.map((image) => image.id),
       description: randomAlbumImages[0].description,
-      matchingAlbums: matchingAlbumsCount,
-      matchingImages: matchingImagesCount,
     });
   } catch (err) {
     console.error("Error during API call:", err);
