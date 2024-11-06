@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>imola.io - Cars Hires SlideShow</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
+    <meta name="apple-mobile-web-app-title" content="imola.io" />
+    <meta name="application-name" content="imola.io" />
+    <meta name="msapplication-TileColor" content="#da532c" />
+    <meta name="theme-color" content="#ffffff" />
+    <!-- Open Graph data -->
+    <meta property="og:title" content="imola.io - Cars Hires SlideShow" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://imola.io/" />
+    <meta property="og:image" content="https://imola.io/imola-preview.jpg" />
+    <meta
+      property="og:description"
+      content="Discover high-resolution Cars SlideShow"
+    />
+    <meta property="og:site_name" content="Imola.io" />
+
+    <!-- Twitter Card data -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="imola.io - Cars Hires SlideShow" />
+    <meta
+      name="twitter:description"
+      content="Discover high-resolution Cars SlideShow"
+    />
+    <meta name="twitter:image" content="https://imola.io/imola-preview.jpg" />
+    <meta name="twitter:url" content="https://imola.io/" />
+  </head>
+  <body>
+    <div class="controls">
+      <input type="text" id="filter-input" placeholder="Search albums..." />
+      <select id="width-filter">
+        <option value="">All Widths</option>
+        <option value="500">Up to 500 px</option>
+        <option value="900">501 - 900 px</option>
+        <option value="1300">901 - 1300 px</option>
+        <option value="2600">1301 - 2600 px</option>
+        <option value="MORE!">2601 px and more</option>
+      </select>
+      <button id="filter-button">Search</button>
+
+      <div id="delay-switch" style="width: 10%">
+        <label><input type="radio" name="delay" value="10000" /> 10s </label>
+        <label>
+          <input type="radio" name="delay" value="5000" checked /> 5s
+        </label>
+        <label><input type="radio" name="delay" value="2000" /> 2s </label>
+        <label><input type="radio" name="delay" value="500" /> 0.5s </label>
+      </div>
+      <button id="toggle-play">Pause</button>
+      <button id="next-album">Next Album</button>
+    </div>
+
+    <div id="counts-container">
+      Found Albums: <span id="album-count">0</span>, Images:
+      <span id="image-count">0</span><br />Showing Album:
+      <span id="album-description">None</span>
+    </div>
+    <div id="album-description"></div>
+    <img id="image-viewer" src="" alt="Random Album SlideShow" />
+
+    <div
+      id="album-title-overlay"
+      style="
+        display: none;
+        position: fixed;
+        top: 5px;
+        right: 5px;
+        color: white;
+        font-size: 1.5em;
+        z-index: 1001;
+      "
+    ></div>
+
+    <div id="filmstrip"></div>
+    <!-- New section for contact details -->
+    <div class="contact-details">
+      <a href="#" id="details-link">What is it?</a>
+      <div id="contact-info" style="display: none">
+        <p>
+          This is a non-commercial project aimed at providing a sleek and
+          convenient way to search and use high-resolution car images in full
+          albums.
+        </p>
+        <p>
+          Our catalog features 62,000 albums with over 2.0 million images,
+          1888-2026.
+        </p>
+        <p>
+          Launched in January 2024, the project is continuously updated with
+          fresh albums.
+        </p>
+        <p>
+          If you have albums not featured in our catalog, know of high-quality
+          resources, have suggestions, or wish to provide feedback, feel free to
+          reach out.
+        </p>
+        <p>
+          Join: <a href="https://t.me/imola_io" target="_blank">@imola_io</a> or
+          <a href="mailto:svetlo6000@gmail.com">e-mail</a>
+        </p>
+      </div>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>
