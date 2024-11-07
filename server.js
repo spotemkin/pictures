@@ -118,10 +118,10 @@ async function initializeAlbumData() {
 
 function filterImages(images, filterKeywords, sizeFilter) {
   const sizeRanges = {
-    500: { min: 0, max: 500 },
-    900: { min: 501, max: 900 },
-    1300: { min: 901, max: 1300 },
-    2600: { min: 1301, max: 2600 },
+    500: { min: 0, max: Infinity },
+    900: { min: 501, max: Infinity },
+    1300: { min: 901, max: Infinity },
+    2600: { min: 1301, max: Infinity },
     "MORE!": { min: 2601, max: Infinity },
   };
 
