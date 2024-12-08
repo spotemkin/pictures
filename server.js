@@ -18,10 +18,9 @@ app.use(morgan("combined", { stream: accessLogStream }));
 let imageDetails = new Map();
 
 async function ensurePreviewImage(albumKeywords) {
-  const keywords = albumKeywords
-    .toLowerCase()
-    .split("-")
-    .map((kw) => kw.trim());
+  const searchQuery = albumKeywords.toLowerCase().replace(/-/g, ' ').trim();
+  const keywords = searchQuery.split(' ');
+
   const previewDirectory = "public/preview";
   const previewFilename = `imola-${keywords.join("-")}.jpg`;
   const fullPath = path.join(previewDirectory, previewFilename);
@@ -32,18 +31,16 @@ async function ensurePreviewImage(albumKeywords) {
     return fullPath;
   } catch {
     const albumPaths = Array.from(imageDetails.keys());
-    const matchingAlbumPaths = albumPaths.filter((albumPath) =>
-      keywords.every((keyword) => albumPath.toLowerCase().includes(keyword))
-    );
+    const matchingAlbumPaths = albumPaths.filter((albumPath) => {
+      const albumLower = albumPath.toLowerCase();
+      return keywords.every((keyword) => albumLower.includes(keyword));
+    });
 
     if (matchingAlbumPaths.length === 0) {
-      throw new Error(
-        "No matching album found for the keywords: " + albumKeywords
-      );
+      throw new Error("No matching album found for the keywords: " + searchQuery);
     }
 
-    const randomAlbumPath =
-      matchingAlbumPaths[Math.floor(Math.random() * matchingAlbumPaths.length)];
+    const randomAlbumPath = matchingAlbumPaths[Math.floor(Math.random() * matchingAlbumPaths.length)];
     const images = imageDetails.get(randomAlbumPath);
     const largeImages = images.filter((img) => !img.path.includes("-prv"));
 
@@ -51,14 +48,13 @@ async function ensurePreviewImage(albumKeywords) {
       throw new Error("No large image found in the selected album.");
     }
 
-    const randomLargeImage =
-      largeImages[Math.floor(Math.random() * largeImages.length)];
+    const randomLargeImage = largeImages[Math.floor(Math.random() * largeImages.length)];
     const imageBuffer = await fsPromises.readFile(randomLargeImage.path);
     await fsPromises.writeFile(fullPath, imageBuffer);
     console.log("Created new preview image:", fullPath);
     return fullPath;
   }
-}
+ }
 
 function generateRandomId() {
   let id;
