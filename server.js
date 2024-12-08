@@ -271,7 +271,39 @@ app.use((err, req, res, next) => {
 });
 
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
+  // игнорируем запросы к статическим файлам
+  if (req.path.includes('.')) {
+    return res.sendFile(path.join(__dirname, "public", req.path));
+  }
+
+  const searchQuery = req.path.slice(1).replace(/-/g, ' ').trim();
+  const formattedSearchQuery = searchQuery.toLowerCase().replace(/\s+/g, '-');
+  const fullUrl = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
+
+  if (searchQuery) {
+    ensurePreviewImage(searchQuery)
+      .then(() => {
+        fs.readFile(path.join(__dirname, 'views', 'index.html'), 'utf8', (err, template) => {
+          if (err) {
+            console.error('Error reading template:', err);
+            return res.status(500).send('Internal Server Error');
+          }
+
+          const html = template
+            .replace(/\${searchQuery}/g, searchQuery)
+            .replace(/\${formattedSearchQuery}/g, formattedSearchQuery)
+            .replace(/\${fullUrl}/g, fullUrl);
+
+          res.send(html);
+        });
+      })
+      .catch(err => {
+        console.error('Error ensuring preview:', err);
+        res.sendFile(path.join(__dirname, "public", "index.html"));
+      });
+  } else {
+    res.sendFile(path.join(__dirname, "public", "index.html"));
+  }
 });
 
 app.listen(port, () => {

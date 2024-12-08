@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Basic SEO -->
+    <meta name="description" content="High-resolution car photo albums featuring ${searchQuery}. Browse through our collection of ${searchQuery} images in various sizes.">
+    <meta name="keywords" content="cars, ${searchQuery}, automotive photography, high resolution, car photos, auto images">
+    <meta name="author" content="imola.io">
+    <link rel="canonical" href="${fullUrl}">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Car Photos: ${searchQuery}">
+    <meta property="og:description" content="High-resolution car photo albums featuring ${searchQuery}">
+    <meta property="og:image" content="/preview/imola-${formattedSearchQuery}.jpg">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="${fullUrl}">
+    <meta property="og:site_name" content="imola.io">
+    <meta property="og:locale" content="en_US">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Car Photos: ${searchQuery}">
+    <meta name="twitter:description" content="High-resolution car photo albums featuring ${searchQuery}">
+    <meta name="twitter:image" content="/preview/imola-${formattedSearchQuery}.jpg">
+
+    <!-- Telegram -->
+    <meta property="telegram:channel" content="@imola_io">
+
+    <!-- iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Imola: ${searchQuery}">
+
+    <!-- Cache Control -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
+    <!-- Icons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
+    <!-- Schema.org -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "ImageGallery",
+        "name": "Car Photos: ${searchQuery}",
+        "description": "High-resolution car photo albums featuring ${searchQuery}",
+        "image": "/preview/imola-${formattedSearchQuery}.jpg",
+        "url": "${fullUrl}",
+        "publisher": {
+            "@type": "Organization",
+            "name": "imola.io",
+            "url": "https://imola.io"
+        }
+    }
+    </script>
+
+    <title>Car Photos: ${searchQuery}</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="controls">
+        <select id="width-filter">
+            <option value="">All Widths</option>
+            <option value="500">all up 501 px</option>
+            <option value="900">up 901 px</option>
+            <option value="1301">up 1301 px</option>
+            <option value="2601">up 2601 px</option>
+        </select>
+
+        <input type="text" id="filter-input" placeholder="Search">
+        <button id="filter-button">Search</button>
+
+        <div id="delay-switch" style="width: 10%">
+            <input type="radio" name="delay" value="10000" id="delay10">
+            <label for="delay10">10s</label>
+            <input type="radio" name="delay" value="5000" id="delay5" checked>
+            <label for="delay5">5s</label>
+            <input type="radio" name="delay" value="2000" id="delay2">
+            <label for="delay2">2s</label>
+            <input type="radio" name="delay" value="500" id="delay0">
+            <label for="delay0">0.5s</label>
+        </div>
+
+        <button id="toggle-play">Pause</button>
+        <button id="next-album">Next Album</button>
+    </div>
+
+    <div id="counts-container">
+        Found Albums: <span id="album-count">0</span>, Images: <span id="image-count">0</span><br>
+        Showing Album: <span id="album-description">None</span>
+    </div>
+
+    <img id="image-viewer" src="" alt="Random Album SlideShow">
+
+    <div id="album-title-overlay" style="display: none; position: fixed; top: 5px; right: 5px; color: white; font-size: 1.5em; z-index: 1001;"></div>
+
+    <div id="filmstrip"></div>
+
+    <div class="contact-details">
+        <a href="#" id="details-link">What is it?</a>
+        <div id="contact-info" style="display: none">
+            This is a non-commercial project aimed at providing a sleek and convenient way to search and use high-resolution car images in full albums.
+
+            Our catalog features 62,000 albums with over 2.0 million images, 1888-2026.
+
+            Launched in January 2024, the project is continuously updated with fresh albums.
+
+            If you have albums not featured in our catalog, know of high-quality resources, have suggestions, or wish to provide feedback, feel free to reach out.
+
+            Join: <a href="https://t.me/imola_io" target="_blank">@imola_io</a> or <a href="mailto:svetlo6000@gmail.com">e-mail</a>
+        </div>
+    </div>
+
+    <script src="/script.js"></script>
+</body>
+</html>

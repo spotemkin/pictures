@@ -95,9 +95,9 @@ document.addEventListener("DOMContentLoaded", function () {
   const updateURL = (searchText) => {
     const newUrl = "/" + searchText.trim().replace(/\s+/g, "-").toLowerCase();
     if (window.location.pathname !== newUrl) {
-      window.history.replaceState({ path: newUrl }, "", newUrl);
+        window.location.href = newUrl;
     }
-  };
+};
 
   const adjustImageAspectRatio = (imgElement) => {
     const containerHeight =
