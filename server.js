@@ -271,8 +271,15 @@ app.use((err, req, res, next) => {
 });
 
 app.get("*", (req, res) => {
+  console.log('=== New request ===');
+  console.log('1. Path:', req.path);
+  console.log('2. __dirname:', __dirname);
+  console.log('3. Views exist:', fs.existsSync(path.join(__dirname, 'views')));
+  console.log('4. Template exist:', fs.existsSync(path.join(__dirname, 'views', 'index.html')));
+
   // игнорируем запросы к статическим файлам
   if (req.path.includes('.')) {
+    console.log('5. Static file requested');
     return res.sendFile(path.join(__dirname, "public", req.path));
   }
 
@@ -280,28 +287,46 @@ app.get("*", (req, res) => {
   const formattedSearchQuery = searchQuery.toLowerCase().replace(/\s+/g, '-');
   const fullUrl = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
 
+  console.log('6. Search query:', searchQuery);
+  console.log('7. Formatted query:', formattedSearchQuery);
+  console.log('8. Full URL:', fullUrl);
+
   if (searchQuery) {
+    console.log('9. Starting ensurePreviewImage');
     ensurePreviewImage(searchQuery)
       .then(() => {
-        fs.readFile(path.join(__dirname, 'views', 'index.html'), 'utf8', (err, template) => {
+        console.log('10. Preview ensured successfully');
+        const templatePath = path.join(__dirname, 'views', 'index.html');
+        console.log('11. Template path:', templatePath);
+
+        fs.readFile(templatePath, 'utf8', (err, template) => {
           if (err) {
-            console.error('Error reading template:', err);
+            console.error('12. Error reading template:', err);
             return res.status(500).send('Internal Server Error');
           }
 
-          const html = template
-            .replace(/\${searchQuery}/g, searchQuery)
-            .replace(/\${formattedSearchQuery}/g, formattedSearchQuery)
-            .replace(/\${fullUrl}/g, fullUrl);
+          console.log('13. Template loaded, length:', template.length);
 
-          res.send(html);
+          try {
+            const html = template
+              .replace(/\${searchQuery}/g, searchQuery)
+              .replace(/\${formattedSearchQuery}/g, formattedSearchQuery)
+              .replace(/\${fullUrl}/g, fullUrl);
+
+            console.log('14. Template processed successfully');
+            res.send(html);
+          } catch (e) {
+            console.error('15. Error processing template:', e);
+            res.status(500).send('Error processing template');
+          }
         });
       })
       .catch(err => {
-        console.error('Error ensuring preview:', err);
+        console.error('16. Error in ensurePreviewImage:', err);
         res.sendFile(path.join(__dirname, "public", "index.html"));
       });
   } else {
+    console.log('17. No search query, serving static index');
     res.sendFile(path.join(__dirname, "public", "index.html"));
   }
 });
