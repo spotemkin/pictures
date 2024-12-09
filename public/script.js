@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
       albumDescription.textContent = data.description;
       albumCountElement.textContent = `${data.matchingAlbums}`;
       imageCountElement.textContent = `${data.matchingImages}`;
-      populateFilmstrip();
+      initializeFilmstrip()
       updateImageDisplay();
       if (isPlaying) startSlideshow();
     } catch (error) {
@@ -73,23 +73,29 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const calculateFilmstripWidth = () => Math.floor(window.innerWidth / 100);
 
-  const populateFilmstrip = () => {
+  const initializeFilmstrip = () => {
     filmstrip.innerHTML = "";
     const maxImages = calculateFilmstripWidth();
     const startIndex = Math.max(currentIndex - Math.floor(maxImages / 2), 0);
     const endIndex = Math.min(startIndex + maxImages, currentImages.length);
+
     for (let i = startIndex; i < endIndex; i++) {
-      const img = document.createElement("img");
-      img.className = "filmstrip-img" + (i === currentIndex ? " selected" : "");
-      img.src = `/image?id=${encodeURIComponent(currentImages[i])}`;
-      img.dataset.imageId = currentImages[i];
-      img.onclick = () => {
-        currentIndex = i;
-        updateImageDisplay();
-      };
-      filmstrip.appendChild(img);
+        const img = document.createElement("img");
+        img.className = "filmstrip-img" + (i === currentIndex ? " selected" : "");
+        img.src = `/image?id=${encodeURIComponent(currentImages[i])}`;
+        img.dataset.index = i;
+        img.onclick = () => {
+            currentIndex = i;
+            updateImageDisplay();
+        };
+        filmstrip.appendChild(img);
     }
-    filmstrip.style.justifyContent = startIndex === 0 ? "flex-start" : "center";
+  };
+
+  const updateFilmstripSelection = () => {
+      document.querySelectorAll('.filmstrip-img').forEach((img) => {
+          img.classList.toggle('selected', parseInt(img.dataset.index) === currentIndex);
+      });
   };
 
   const updateURL = (searchText) => {
@@ -112,21 +118,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const updateImageDisplay = () => {
     if (currentIndex >= currentImages.length) {
-      fetchRandomImages(filterInput.value.trim(), widthFilterSelect.value);
+        fetchRandomImages(filterInput.value.trim(), widthFilterSelect.value);
     } else {
-      const previewImageId = currentImages[currentIndex];
-      const originalImageId = previewImageId.replace("-prv", "");
-      imageView.onload = () => adjustImageAspectRatio(imageView);
-      imageView.src = `/image?id=${encodeURIComponent(originalImageId)}`;
-
-      currentIndex++;
-      populateFilmstrip();
-      document.querySelectorAll(".filmstrip-img").forEach((img) => {
-        img.classList.toggle(
-          "selected",
-          previewImageId === img.dataset.imageId
-        );
-      });
+        const previewImageId = currentImages[currentIndex];
+        const originalImageId = previewImageId.replace("-prv", "");
+        imageView.onload = () => adjustImageAspectRatio(imageView);
+        imageView.src = `/image?id=${encodeURIComponent(originalImageId)}`;
+        updateFilmstripSelection();
+        currentIndex++;
     }
   };
 

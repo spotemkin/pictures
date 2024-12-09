@@ -228,15 +228,18 @@ app.get("/api/random-preview", async (req, res) => {
 
 app.get("/image", async (req, res) => {
   const imageId = req.query.id;
+  console.log(`[${new Date().toISOString()}] Image request: ${imageId}`);
   let found = false;
   for (const images of imageDetails.values()) {
     for (const detail of images) {
       if (detail.id === imageId) {
+        console.log(`[${new Date().toISOString()}] Sending file: ${detail.path}`);
         return res.sendFile(path.resolve(detail.path));
       }
     }
   }
   if (!found) {
+    console.log(`[${new Date().toISOString()}] Image not found: ${imageId}`);
     res.status(404).send("Image not found");
   }
 });
