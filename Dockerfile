@@ -9,9 +9,7 @@ ENV PIC_DOMAIN=cars.imola.io
 ENV MAIN_DOMAIN=cars.imola.io
 ENV MAIN_HOST=cars.imola.io
 
-RUN ls -la /app
-# User permissions for HestiaCP
-RUN adduser -D -u 1001 dns && chown -R dns:dns /app
+RUN mkdir -p /app/logs
 
 COPY package*.json ./
 
@@ -21,10 +19,6 @@ COPY public /app/public
 
 COPY . .
 
-RUN chown -R dns:dns /app
-
 EXPOSE 3000
-
-USER dns
 
 CMD ["node", "server.js"]
