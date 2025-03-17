@@ -26,7 +26,7 @@ COPY . .
 # Set correct permissions
 RUN chown -R dns:dns /app
 
-EXPOSE ${PIC_SERVER_PORT}
+EXPOSE 3000
 
 USER dns
 
