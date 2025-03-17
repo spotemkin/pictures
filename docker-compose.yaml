@@ -3,7 +3,6 @@ version: '3.9'
 services:
   pic_main:
     build: .
-    image: "ghcr.io/spotemkin/pictures:latest"
     environment:
       - EMAIL=draste@imola.io
       - PIC_DOMAIN=cars.imola.io

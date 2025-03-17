@@ -2,15 +2,13 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-ARG ALBUM_LIST_PATH
 ENV ALBUM_LIST_PATH=/data/pics/sys/album-data/album-list.txt
-ARG PIC_SERVER_PORT
 ENV PIC_SERVER_PORT=3000
+ENV EMAIL=draste@imola.io
+ENV PIC_DOMAIN=cars.imola.io
+ENV MAIN_DOMAIN=cars.imola.io
+ENV MAIN_HOST=cars.imola.io
 
-RUN echo "ARG ALBUM_LIST_PATH=${ALBUM_LIST_PATH}"
-RUN echo "ARG PIC_SERVER_PORT=${PIC_SERVER_PORT}"
-
-# for debug
 RUN ls -la /app
 # User permissions for HestiaCP
 RUN adduser -D -u 1001 dns && chown -R dns:dns /app
@@ -23,7 +21,6 @@ COPY public /app/public
 
 COPY . .
 
-# Set correct permissions
 RUN chown -R dns:dns /app
 
 EXPOSE 3000
