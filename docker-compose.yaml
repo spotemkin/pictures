@@ -1,0 +1,29 @@
+version: '3.9'
+
+services:
+  pic_main:
+    build: .
+    image: "ghcr.io/spotemkin/pictures:latest"
+    environment:
+      - EMAIL=${EMAIL}
+      - PIC_DOMAIN=${PIC_DOMAIN}
+      - MAIN_DOMAIN=${MAIN_DOMAIN}
+      - MAIN_HOST=${MAIN_HOST}
+      - ALBUM_LIST_PATH=${ALBUM_LIST_PATH}
+      - PIC_SERVER_PORT=${PIC_SERVER_PORT}
+    restart: always
+    volumes:
+      - /home/dns/imola.io/auto:/data/pics/auto
+      - /home/dns/imola.io/auto-prv:/data/pics/auto-prv
+      - /home/dns/imola.io/album-data:/data/pics/sys/album-data
+      - /home/dns/web/cars.imola.io/public_html:/data/pics/sys/http-data
+      - /home/dns/imola.io/express-logs:/app/logs
+      - /home/dns/web/cars.imola.io/public_html:/app/public
+    ports:
+      - "${PIC_SERVER_PORT}:${PIC_SERVER_PORT}"
+    user: "dns"
+    deploy:
+      replicas: 8
+      update_config:
+        parallelism: 2
+        delay: 10s

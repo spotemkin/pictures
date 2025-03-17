@@ -12,6 +12,8 @@ RUN echo "ARG PIC_SERVER_PORT=${PIC_SERVER_PORT}"
 
 # for debug
 RUN ls -la /app
+# User permissions for HestiaCP
+RUN adduser -D -u 1001 dns && chown -R dns:dns /app
 
 COPY package*.json ./
 
@@ -21,8 +23,11 @@ COPY public /app/public
 
 COPY . .
 
-# COPY album-list.txt .  //from server volume
+# Set correct permissions
+RUN chown -R dns:dns /app
 
 EXPOSE ${PIC_SERVER_PORT}
+
+USER dns
 
 CMD ["node", "server.js"]
